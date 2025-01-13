@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luman.DataLayer", "Luman.DataLayer\Luman.DataLayer.csproj", "{BA7CC685-C40E-4149-884A-F9287E847502}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luman.Busines", "Luman.Busines\Luman.Busines.csproj", "{2FA7592B-6F67-4D1B-9938-156B0D10F530}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luman.Api", "Luman.Api\Luman.Api.csproj", "{39F7CE50-E408-4374-BCB9-C811B146F205}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BA7CC685-C40E-4149-884A-F9287E847502}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA7CC685-C40E-4149-884A-F9287E847502}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA7CC685-C40E-4149-884A-F9287E847502}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA7CC685-C40E-4149-884A-F9287E847502}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FA7592B-6F67-4D1B-9938-156B0D10F530}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FA7592B-6F67-4D1B-9938-156B0D10F530}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FA7592B-6F67-4D1B-9938-156B0D10F530}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FA7592B-6F67-4D1B-9938-156B0D10F530}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39F7CE50-E408-4374-BCB9-C811B146F205}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39F7CE50-E408-4374-BCB9-C811B146F205}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39F7CE50-E408-4374-BCB9-C811B146F205}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39F7CE50-E408-4374-BCB9-C811B146F205}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

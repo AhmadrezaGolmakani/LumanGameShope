@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Luman.Api</name>
+    </assembly>
+    <members>
+        <member name="M:Luman.Api.Controllers.UserAccountController.Register(Luman.Api.DTOs.UserDTO.RegisterUser)">
+            <summary>
+            ثبت نام کاربر
+            </summary>
+            <param name="model">مدل ورودی جهت ثبت نام </param>
+            <returns></returns>
+        </member>
+        <member name="M:Luman.Api.Controllers.UserAccountController.Login(Luman.Busines.DTOs.UserDTO.LoginModel)">
+            <summary>
+            ورود کابر با سیستم jwt
+            </summary>
+            <param name="model">مدل ورودی جهت ورود کاربر </param>
+            <returns>یک کد jwt را میدهد</returns> 
+        </member>
+        <member name="M:Luman.Api.Controllers.UserAccountController.EditeUser(Luman.Busines.DTOs.UserDTO.EditeUserModel,System.Int32)">
+            <summary>
+            ویرایش کاربر از طریق پنل کاربری
+            </summary>
+            <param name="model">مدل ورودی جهت ویرایش حساب کاربری</param>
+            <param name="userid">ایدی کاربر اجاری است</param>
+            <returns></returns>
+        </member>
+        <member name="M:Luman.Api.Controllers.UserAccountController.ChnagePassWord(Luman.Busines.DTOs.UserDTO.ChangePassword,System.Int32)">
+            <summary>
+            تغیر رمز عبور از طریق حساب کاربری 
+            </summary>
+            <param name="model">مدل ورودی جهت تغیر رمز عبور توجه داشته باشید وارد کردن username اجباری است </param>
+            <param name="userid">ایدی کاربر اجباری است</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
