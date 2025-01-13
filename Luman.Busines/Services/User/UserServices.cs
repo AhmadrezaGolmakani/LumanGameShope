@@ -67,6 +67,20 @@ namespace Luman.Busines.Services.User
             return _context.users.FirstOrDefault(u => u.UserName == username).UserId;
         }
 
+        public InformationUserPanel GetUserInformation(string username)
+        {
+            var user = GetUserByUserName(username);
+
+            InformationUserPanel panel = new InformationUserPanel();
+            panel.Name = user.Name;
+            panel.Family = user.Family;
+            panel.Email = user.Email;
+            panel.UserName = user.UserName;
+            panel.CreateDate = user.CreateDate;
+
+            return panel;
+        }
+
         public bool IsCorrectpass(string username, string pass)
         {
             try

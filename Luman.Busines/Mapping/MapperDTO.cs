@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Luman.Api.Utility;
 using Luman.Busines.DTOs.UserDTO;
 using Luman.DataLayer.EntityModel.User;
 using System;
@@ -13,8 +14,11 @@ namespace Luman.Busines.Mapping
     {
         public MapperDTO()
         {
-            CreateMap<User, EditeUserModel>().ReverseMap();
-                           
+            CreateMap<User, InformationUserPanel>()
+                .ForMember(x => x.CreateDate, d => d.MapFrom(res => res.CreateDate.ToPersainDate()));
+               
+               
+
         }
     }
 }

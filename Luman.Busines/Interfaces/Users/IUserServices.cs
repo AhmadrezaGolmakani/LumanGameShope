@@ -13,6 +13,8 @@ namespace Luman.Busines.Interfaces.Users
     {
         #region UserAccount
 
+        InformationUserPanel GetUserInformation(string username);
+
         bool CreateUser(User user);
         User LoginUser(string username , string pass);
         bool IsCorrectpass(string username , string pass);

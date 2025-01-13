@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Luman.Api.Controllers
 {
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/v{version:apiVersion}/Account")]
     //[Route("api/[controller]")]
     [ApiController]
     [ApiVersion("1.0")]
@@ -133,6 +133,30 @@ namespace Luman.Api.Controllers
                 _services.ChangePassword(model.UserName , model.NewPassword);
             }
             return Ok();
+        }
+
+
+        /// <summary>
+        /// گرفتن اطلاعات برای حساب کاربری
+        /// </summary>
+        /// <param name="id">ایدی کاربر </param>
+        /// <returns></returns>  
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(400)]
+        [HttpGet("UserPanel/{id:int}")]
+        public IActionResult GetInfoUser(int id)
+        {
+            var user = _services.GetUserById(id);
+
+            if (user == null) return NotFound(); 
+
+            var model = _mapper.Map<User>(user);
+
+            var panel = _services.GetUserInformation(model.UserName);
+
+            return Ok(panel);
         }
     }
 }

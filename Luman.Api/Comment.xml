@@ -34,5 +34,12 @@
             <param name="userid">ایدی کاربر اجباری است</param>
             <returns></returns>
         </member>
+        <member name="M:Luman.Api.Controllers.UserAccountController.GetInfoUser(System.Int32)">
+            <summary>
+            گرفتن اطلاعات برای حساب کاربری
+            </summary>
+            <param name="id">ایدی کاربر </param>
+            <returns></returns>  
+        </member>
     </members>
 </doc>
