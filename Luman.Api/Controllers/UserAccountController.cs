@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
-using Luman.Api.DTOs.UserDTO;
-using Luman.Api.Utility;
 using Luman.Busines.DTOs.UserDTO;
-using Luman.Busines.Interfaces.Users;
+using Luman.Busines.Services.User;
+using Luman.Busines.Utility;
 using Luman.DataLayer.EntityModel.User;
 using Luman.DataLayer.Migrations;
 using Microsoft.AspNetCore.Http;
@@ -26,6 +25,9 @@ namespace Luman.Api.Controllers
             _mapper = mapper;
         }
 
+        #region Account
+
+
         /// <summary>
         /// ثبت نام کاربر
         /// </summary>
@@ -39,11 +41,12 @@ namespace Luman.Api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(model);
 
-            if(!_services.IsExsitEmail(model.Email)) return BadRequest(model);
+            if (!_services.IsExsitEmail(model.Email)) return BadRequest(model);
 
-            if(!_services.IsExsitUserName(model.UserName)) return BadRequest(model);
+            if (!_services.IsExsitUserName(model.UserName)) return BadRequest(model);
 
-            User user = new(){
+            User user = new()
+            {
                 Name = model.Name,
                 Email = model.Email,
                 Family = model.Family,
@@ -51,6 +54,7 @@ namespace Luman.Api.Controllers
                 UserName = model.UserName,
                 CreateDate = DateTime.Now,
                 IsDelete = false,
+                 
             };
 
             _services.CreateUser(user);
@@ -68,20 +72,20 @@ namespace Luman.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(201)]
         [HttpPost("Login")]
-        public IActionResult Login([FromBody] LoginModel model )
+        public IActionResult Login([FromBody] LoginModel model)
         {
             if (!ModelState.IsValid) return BadRequest(model);
 
-            if (!_services.IsCorrectpass( model.UserName , model.Password)) 
+            if (!_services.IsCorrectpass(model.UserName, model.Password))
             {
                 return BadRequest(new { error = "کاربر یافت نشد." });
 
             }
 
-            var user = _services.LoginUser(model.UserName , model.Password);
+            var user = _services.LoginUser(model.UserName, model.Password);
             if (user == null)
             {
-                return NotFound(new {error = "کاربر یافت نشد"});
+                return NotFound(new { error = "کاربر یافت نشد" });
             }
             return Ok(user);
         }
@@ -96,20 +100,20 @@ namespace Luman.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [HttpPatch("Edite/{userid:int}")]
-        public IActionResult EditeUser([FromBody] EditeUserModel model , int userid)
+        public IActionResult EditeUser([FromBody] EditeUserModel model, int userid)
         {
-            if(userid != model.UserId) return NotFound(model);
+            if (userid != model.UserId) return NotFound(model);
 
             if (!ModelState.IsValid) return BadRequest(model);
 
-            var user =_services.GetUserById(userid);
+            var user = _services.GetUserById(userid);
             user.Family = model.Family;
             user.Name = model.Name;
             user.Email = model.Email;
             user.UserName = model.UserName;
-     
 
-            if(_services.UpdateUser(user)) return NoContent();
+
+            if (_services.UpdateUser(user)) return NoContent();
 
             ModelState.AddModelError("", "مشکلی از سمت سرور پیش آمره لطفا مجددا تلاش کنید.");
 
@@ -128,9 +132,9 @@ namespace Luman.Api.Controllers
         [HttpPatch("changepassword/{userid:int}")]
         public IActionResult ChnagePassWord([FromBody] ChangePassword model, int userid)
         {
-            if (_services.ComparePassword(model.UserName , model.OldPassword))
+            if (_services.ComparePassword(model.UserName, model.OldPassword))
             {
-                _services.ChangePassword(model.UserName , model.NewPassword);
+                _services.ChangePassword(model.UserName, model.NewPassword);
             }
             return Ok();
         }
@@ -150,7 +154,7 @@ namespace Luman.Api.Controllers
         {
             var user = _services.GetUserById(id);
 
-            if (user == null) return NotFound(); 
+            if (user == null) return NotFound();
 
             var model = _mapper.Map<User>(user);
 
@@ -158,5 +162,7 @@ namespace Luman.Api.Controllers
 
             return Ok(panel);
         }
+
+        #endregion
     }
 }

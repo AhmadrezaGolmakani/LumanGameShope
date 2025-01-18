@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Luman.Api.Utility;
 using Luman.Busines.DTOs.UserDTO;
+using Luman.Busines.Utility;
 using Luman.DataLayer.EntityModel.User;
 using System;
 using System.Collections.Generic;

@@ -4,7 +4,7 @@
         <name>Luman.Api</name>
     </assembly>
     <members>
-        <member name="M:Luman.Api.Controllers.UserAccountController.Register(Luman.Api.DTOs.UserDTO.RegisterUser)">
+        <member name="M:Luman.Api.Controllers.UserAccountController.Register(Luman.Busines.DTOs.UserDTO.RegisterUser)">
             <summary>
             ثبت نام کاربر
             </summary>

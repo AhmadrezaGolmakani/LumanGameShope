@@ -1,7 +1,6 @@
-﻿using Luman.Api.DTOs;
-using Luman.Api.Utility;
+﻿using Azure;
 using Luman.Busines.DTOs.UserDTO;
-using Luman.Busines.Interfaces.Users;
+using Luman.Busines.Utility;
 using Luman.DataLayer.Context;
 using Luman.DataLayer.EntityModel.User;
 using Microsoft.Extensions.Options;
@@ -55,6 +54,28 @@ namespace Luman.Busines.Services.User
            
         }
 
+        public bool CreateUserForAdmin(CreateUserDTO user)
+        {
+            DataLayer.EntityModel.User.User addUser = new()
+            {
+                UserName = user.UserName,
+                Password = PasswordHelper.EncodePasswordMd5(user.Password),
+                Email = user.Email,
+                Name = user.UserName,
+                Family = user.Family,
+                CreateDate = DateTime.Now,
+                IsDelete = false,
+            };
+            return CreateUser(addUser);
+        }
+
+        public bool DeleteUser(int userId)
+        {
+            var user = GetUserById(userId);
+            _context.users.Remove(user);
+            return Save();
+        }
+
         public DataLayer.EntityModel.User.User GetUserById(int userid) =>
             _context.users.Find(userid);
         public DataLayer.EntityModel.User.User GetUserByUserName(string username)
@@ -79,6 +100,34 @@ namespace Luman.Busines.Services.User
             panel.CreateDate = user.CreateDate;
 
             return panel;
+        }
+
+        public UserForAdminDTO GetUsersForAdmin(int pageid = 1, string fillterEmail = "", string fillterUsername = "")
+        {
+            IQueryable<DataLayer.EntityModel.User.User> result = _context.users;
+
+            if (!string.IsNullOrEmpty(fillterEmail)) 
+            {
+                result = result.Where(u=>u.Email.Contains(fillterEmail));
+            }
+            if (!string.IsNullOrEmpty(fillterUsername))
+            {
+                result = result.Where(u => u.UserName.Contains(fillterUsername));
+            }
+
+            int take = 10;
+            int skip = (pageid - 1) * take;
+
+
+            UserForAdminDTO list = new UserForAdminDTO();
+            list.CurrentPage = pageid;
+            list.PageCount = result.Count() / take;
+
+            list.users = result.OrderBy(u => u.CreateDate).Skip(skip).Take(take).ToList();
+
+
+
+            return list;
         }
 
         public bool IsCorrectpass(string username, string pass)
@@ -140,7 +189,6 @@ namespace Luman.Busines.Services.User
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name , user.UserId.ToString()),
-                    //new Claim(ClaimTypes.Role , user.Role.ToString()),
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),

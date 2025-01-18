@@ -1,7 +1,7 @@
-using Luman.Api.Utility;
-using Luman.Busines.Interfaces.Users;
+using Luman.Api.Document;
 using Luman.Busines.Mapping;
 using Luman.Busines.Services.User;
+using Luman.Busines.Utility;
 using Luman.DataLayer.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;

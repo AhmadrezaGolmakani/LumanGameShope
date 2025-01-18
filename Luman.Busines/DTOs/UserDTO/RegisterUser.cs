@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Luman.Api.DTOs.UserDTO
+namespace Luman.Busines.DTOs.UserDTO
 {
     public class RegisterUser
     {
@@ -33,6 +33,6 @@ namespace Luman.Api.DTOs.UserDTO
 
     public class LoginUser
     {
-        
+
     }
 }

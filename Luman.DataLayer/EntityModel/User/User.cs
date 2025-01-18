@@ -42,5 +42,7 @@ namespace Luman.DataLayer.EntityModel.User
 
         [NotMapped]
         public string JwtSecret { get; set; }
+
+        public List<UserRole> userRoles { get; set; }
     }
 }

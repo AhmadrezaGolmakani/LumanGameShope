@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Luman.Api.Utility
+namespace Luman.Api.Document
 {
     public class SwaggerLumanDocument : IConfigureOptions<SwaggerGenOptions>
     {
@@ -22,10 +22,10 @@ namespace Luman.Api.Utility
             {
                 options.SwaggerDoc(item.GroupName,
                      new OpenApiInfo()
-                {
-                        Title = $"Vila Api Version {item.ApiVersion}",
-                        Version = item.ApiVersion.ToString()
-                });
+                     {
+                         Title = $"Vila Api Version {item.ApiVersion}",
+                         Version = item.ApiVersion.ToString()
+                     });
             }
 
 

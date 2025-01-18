@@ -1,4 +1,4 @@
-﻿namespace Luman.Api.Utility
+﻿namespace Luman.Busines.Utility
 {
     public class JwtSettings
     {

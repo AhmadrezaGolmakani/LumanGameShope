@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace Luman.Api.Utility
+namespace Luman.Busines.Utility
 {
     public static class DateConvertor
     {
