@@ -31,6 +31,7 @@ namespace Luman.Busines.Services.User
         void ChangePassword(string username, string newPass);
 
         bool DeleteUser(int userId);
+        void KarbareAdi(DataLayer.EntityModel.User.User user);
 
         bool Save();
 

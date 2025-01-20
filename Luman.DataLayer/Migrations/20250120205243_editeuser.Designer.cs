@@ -4,6 +4,7 @@ using Luman.DataLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Luman.DataLayer.Migrations
 {
     [DbContext(typeof(LumanContext))]
-    partial class LumanContextModelSnapshot : ModelSnapshot
+    [Migration("20250120205243_editeuser")]
+    partial class editeuser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -164,6 +167,9 @@ namespace Luman.DataLayer.Migrations
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RU_Id")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserName")
                         .IsRequired()

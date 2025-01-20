@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Luman.DataLayer.EntityModel.User
@@ -40,9 +41,12 @@ namespace Luman.DataLayer.EntityModel.User
 
         public bool IsDelete { get; set; }
 
+
         [NotMapped]
+        [JsonIgnore]
         public string JwtSecret { get; set; }
 
-        public List<UserRole> userRoles { get; set; }
+        [JsonIgnore]
+        public  List<UserRole> userRoles { get; set; }
     }
 }

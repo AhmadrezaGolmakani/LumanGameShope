@@ -7,7 +7,7 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Luman.Busines.Services.Permition
+namespace Luman.DataLayer.EntityModel.Permitions
 {
     public class Permition
     {
@@ -18,8 +18,11 @@ namespace Luman.Busines.Services.Permition
         [MaxLength(100)]
         public string PermissionTitel { get; set; }
 
+        public int? ParentID { get; set; }
 
-        
-        public List<RolePermission> rolePermissions { get; set; }
+        [ForeignKey("ParentID")]
+        public virtual List<Permition> permission { get; set; }
+
+        public virtual List<RolePermission> rolePermissions { get; set; }
     }
 }

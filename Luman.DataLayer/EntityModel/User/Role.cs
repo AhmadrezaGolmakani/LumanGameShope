@@ -15,7 +15,7 @@ namespace Luman.DataLayer.EntityModel.User
         [Display(Name ="نام ")]
         public string Name { get; set; }
 
-        public List<UserRole> userRoles { get; set; }
+        public  List<UserRole> userRoles { get; set; }
 
     }
 }

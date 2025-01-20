@@ -1,9 +1,11 @@
 using Luman.Api.Document;
 using Luman.Busines.Mapping;
+using Luman.Busines.Services.Permission;
 using Luman.Busines.Services.User;
 using Luman.Busines.Utility;
 using Luman.DataLayer.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +16,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAuthorization();
 
 
 builder.Services.AddControllers();
@@ -33,6 +36,7 @@ builder.Services.AddCors();
 #region IOC
 
 builder.Services.AddScoped<IUserServices, UserServices>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
 
 #endregion
 
@@ -105,6 +109,7 @@ builder.Services.AddAutoMapper(typeof(MapperDTO));
 
 
 #endregion
+
 
 
 

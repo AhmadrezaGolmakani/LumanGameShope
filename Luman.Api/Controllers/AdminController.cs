@@ -5,19 +5,23 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Luman.Busines.Utility;
+using Luman.Busines.Services.Permission;
 
 namespace Luman.Api.Controllers
 {
     [Route("api/v{version:apiVersion}/Admin")]
     [ApiController]
     [ApiVersion("2.0")]
+    [PermissionChecker(1)]
     public class AdminController : ControllerBase
     {
         private readonly IUserServices _userServices;
+        private readonly IPermissionService _permissionService;
 
-        public AdminController(IUserServices userServices)
+        public AdminController(IUserServices userServices,IPermissionService permissionService)
         {
             _userServices = userServices;
+            _permissionService = permissionService;
         }
 
         #region Users
@@ -46,6 +50,10 @@ namespace Luman.Api.Controllers
                 ModelState.AddModelError("UserName", "این نام کاربری  قبلا ثبت نام کرده است");
             }
             _userServices.CreateUserForAdmin(user);
+
+
+            
+
             return Ok();
         }
 
@@ -82,6 +90,18 @@ namespace Luman.Api.Controllers
 
         #endregion
 
+
+        #region Roles
+
+        [HttpGet("GetRoles")]
+        public IActionResult GetRoles()
+        {
+            var role = _permissionService.GetRole();
+            return Ok(role);
+        }
+
+
+        #endregion
 
     }
 }

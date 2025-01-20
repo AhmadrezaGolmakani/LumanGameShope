@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Luman.Busines.DTOs.UserDTO;
+using Luman.Busines.Services.Permission;
 using Luman.Busines.Services.User;
 using Luman.Busines.Utility;
 using Luman.DataLayer.EntityModel.User;
@@ -14,14 +15,17 @@ namespace Luman.Api.Controllers
     //[Route("api/[controller]")]
     [ApiController]
     [ApiVersion("1.0")]
+
     public class UserAccountController : ControllerBase
     {
         private readonly IUserServices _services;
         private readonly IMapper _mapper;
+        private readonly IPermissionService _permissionService;
 
-        public UserAccountController(IUserServices services, IMapper mapper)
+        public UserAccountController(IUserServices services,  IPermissionService permissionService, IMapper mapper)
         {
             _services = services;
+            _permissionService = permissionService;
             _mapper = mapper;
         }
 
@@ -41,9 +45,9 @@ namespace Luman.Api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(model);
 
-            if (!_services.IsExsitEmail(model.Email)) return BadRequest(model);
+            if (_services.IsExsitEmail(model.Email)) return BadRequest(model);
 
-            if (!_services.IsExsitUserName(model.UserName)) return BadRequest(model);
+            if (_services.IsExsitUserName(model.UserName)) return BadRequest(model);
 
             User user = new()
             {
@@ -57,7 +61,9 @@ namespace Luman.Api.Controllers
                  
             };
 
-            _services.CreateUser(user);
+            if (_services.CreateUser(user)) _services.KarbareAdi(user);
+
+
             return Ok(user);
 
 

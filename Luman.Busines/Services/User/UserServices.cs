@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Reflection;
@@ -24,7 +25,7 @@ namespace Luman.Busines.Services.User
         private readonly JwtSettings _Settings;
 
 
-        public UserServices(LumanContext context , IOptions<JwtSettings> Settings)
+        public UserServices(LumanContext context, IOptions<JwtSettings> Settings)
         {
             _context = context;
             _Settings = Settings.Value;
@@ -40,18 +41,18 @@ namespace Luman.Busines.Services.User
         public bool ComparePassword(string oldpass, string username)
         {
             var hashOldpass = PasswordHelper.EncodePasswordMd5(oldpass);
-            _context.users.Any(u=>u.UserName == username && u.Password == hashOldpass);
+            _context.users.Any(u => u.UserName == username && u.Password == hashOldpass);
             return true;
         }
 
         public bool CreateUser(DataLayer.EntityModel.User.User user)
         {
-           
-                _context.users.Add(user);
-                _context.SaveChanges();
-                return true;
-            
-           
+
+            _context.users.Add(user);
+            _context.SaveChanges();
+            return true;
+
+
         }
 
         public bool CreateUserForAdmin(CreateUserDTO user)
@@ -80,7 +81,7 @@ namespace Luman.Busines.Services.User
             _context.users.Find(userid);
         public DataLayer.EntityModel.User.User GetUserByUserName(string username)
         {
-            return _context.users.FirstOrDefault(u=>u.UserName == username);
+            return _context.users.FirstOrDefault(u => u.UserName == username);
         }
 
         public int GetUserIdByUserName(string username)
@@ -106,9 +107,9 @@ namespace Luman.Busines.Services.User
         {
             IQueryable<DataLayer.EntityModel.User.User> result = _context.users;
 
-            if (!string.IsNullOrEmpty(fillterEmail)) 
+            if (!string.IsNullOrEmpty(fillterEmail))
             {
-                result = result.Where(u=>u.Email.Contains(fillterEmail));
+                result = result.Where(u => u.Email.Contains(fillterEmail));
             }
             if (!string.IsNullOrEmpty(fillterUsername))
             {
@@ -132,45 +133,29 @@ namespace Luman.Busines.Services.User
 
         public bool IsCorrectpass(string username, string pass)
         {
-            try
-            {
+            
                 var hashPass = PasswordHelper.EncodePasswordMd5(pass.Trim());
                 _context.users.Any(u => u.UserName.Trim() == username.Trim() && u.Password == hashPass);
                 return true;
-            }
-            catch 
-            {
-
-                return false;
-            }
+            
+           
         }
 
         public bool IsExsitEmail(string email)
         {
-            try
-            {
-                _context.users.Any(u=>u.Email == email);
+            
+                _context.users.Any(u => u.Email == email);
                 return true;
-            }
-            catch 
-            {
-
-                return false;
-            }
+            
         }
 
         public bool IsExsitUserName(string username)
         {
-            try
-            {
-                _context.users.Any(u => u.UserName == username);
+            
+          
+               _context.users.Any(u => u.UserName == username);
                 return true;
-            }
-            catch
-            {
-
-                return false;
-            }
+            
         }
 
         public DataLayer.EntityModel.User.User LoginUser(string username, string pass)
@@ -188,7 +173,7 @@ namespace Luman.Busines.Services.User
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name , user.UserId.ToString()),
+                    new Claim(ClaimTypes.Name , user.UserName.ToString()),
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
@@ -204,18 +189,36 @@ namespace Luman.Busines.Services.User
             return user;
         }
 
-        public bool Save()=> 
+        public bool Save() =>
             _context.SaveChanges() >= 0 ? true : false;
-        
+
 
         public bool UpdateUser(Luman.DataLayer.EntityModel.User.User user)
         {
-           
+
             _context.Update(user);
             Save();
             return true;
+
+
+        }
+        public void KarbareAdi(DataLayer.EntityModel.User.User user)
+        {
+
+            if (IsExsitEmail(user.Email) || IsExsitUserName(user.UserName))
+            {
+                UserRole role = new UserRole()
+                {
+                    UserId = user.UserId,
+                    RoleId = 2
+
+                };
+
+                _context.Add(role);
+                Save();
+             
+            }
             
-           
         }
     }
 }

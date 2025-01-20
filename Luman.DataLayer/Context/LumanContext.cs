@@ -1,4 +1,4 @@
-﻿using Luman.Busines.Services.Permition;
+﻿using Luman.DataLayer.EntityModel.Permitions;
 using Luman.DataLayer.EntityModel.Product;
 using Luman.DataLayer.EntityModel.User;
 using Microsoft.EntityFrameworkCore;

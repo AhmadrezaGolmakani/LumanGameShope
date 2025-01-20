@@ -1,31 +1,33 @@
 ﻿using Luman.Busines.Services.Permission;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System;
 
-public class PermissionCheckerAttribute : AuthorizeAttribute, IAuthorizationFilter
+public class PermissionCheckerAttribute : Attribute, IAuthorizationFilter
 {
     private readonly int _permissionId;
     private IPermissionService _permissionService;
 
+    // Constructor to inject permissionId
     public PermissionCheckerAttribute(int permissionId)
     {
         _permissionId = permissionId;
     }
 
+    // This method is called to perform the authorization logic
     public void OnAuthorization(AuthorizationFilterContext context)
     {
-        _permissionService =
-            (IPermissionService)context.HttpContext.RequestServices.GetService(typeof(IPermissionService));
+        // Getting the IPermissionService via DI (Dependency Injection)
+        _permissionService = (IPermissionService)context.HttpContext.RequestServices.GetService(typeof(IPermissionService));
 
         if (context.HttpContext.User.Identity.IsAuthenticated)
         {
             string userName = context.HttpContext.User.Identity.Name;
 
-            // بررسی دسترسی کاربر به مجوز مورد نظر
+            // Check if the user has the required permission
             if (!_permissionService.CheckPermission(_permissionId, userName))
             {
-                // کاربر دسترسی ندارد
+                // If user does not have permission, return a 403 Forbidden response
                 context.Result = new ObjectResult(new
                 {
                     Message = "Access Denied",
@@ -38,7 +40,7 @@ public class PermissionCheckerAttribute : AuthorizeAttribute, IAuthorizationFilt
         }
         else
         {
-            // کاربر احراز هویت نشده است
+            // If the user is not authenticated, return a 401 Unauthorized response
             context.Result = new ObjectResult(new
             {
                 Message = "Unauthorized",

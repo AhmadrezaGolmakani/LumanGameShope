@@ -25,6 +25,6 @@ namespace Luman.DataLayer.EntityModel.Product
         public int CategoryId { get; set; }
 
         [ForeignKey("CategoryId")]
-        public CategoryProduct category { get; set; } 
+        public virtual CategoryProduct category { get; set; } 
     }
 }

@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Luman.DataLayer.EntityModel.User;
 
-namespace Luman.Busines.Services.Permition
+namespace Luman.DataLayer.EntityModel.Permitions
 {
     public class RolePermission
     {
@@ -11,7 +12,8 @@ namespace Luman.Busines.Services.Permition
         public int PermissionID { get; set; }
 
 
-        public Role role { get; set; }
-        public Permition permition { get; set; }
+        public virtual Role role { get; set; }
+        [ForeignKey("PermissionID")]
+        public virtual Permition permition { get; set; }
     }
 }

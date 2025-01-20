@@ -4,6 +4,7 @@ using Luman.DataLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Luman.DataLayer.Migrations
 {
     [DbContext(typeof(LumanContext))]
-    partial class LumanContextModelSnapshot : ModelSnapshot
+    [Migration("20250120134728_editeTblpermission")]
+    partial class editeTblpermission
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace Luman.DataLayer.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Luman.DataLayer.EntityModel.Permitions.Permition", b =>
+            modelBuilder.Entity("Luman.Busines.Services.Permition.Permition", b =>
                 {
                     b.Property<int>("PermissionID")
                         .ValueGeneratedOnAdd()
@@ -45,7 +48,7 @@ namespace Luman.DataLayer.Migrations
                     b.ToTable("permitions");
                 });
 
-            modelBuilder.Entity("Luman.DataLayer.EntityModel.Permitions.RolePermission", b =>
+            modelBuilder.Entity("Luman.Busines.Services.Permition.RolePermission", b =>
                 {
                     b.Property<int>("RP_id")
                         .ValueGeneratedOnAdd()
@@ -59,11 +62,14 @@ namespace Luman.DataLayer.Migrations
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
+                    b.Property<int>("permitionPermissionID")
+                        .HasColumnType("int");
+
                     b.HasKey("RP_id");
 
-                    b.HasIndex("PermissionID");
-
                     b.HasIndex("RoleId");
+
+                    b.HasIndex("permitionPermissionID");
 
                     b.ToTable("rolePermissions");
                 });
@@ -198,24 +204,24 @@ namespace Luman.DataLayer.Migrations
                     b.ToTable("userRoles");
                 });
 
-            modelBuilder.Entity("Luman.DataLayer.EntityModel.Permitions.Permition", b =>
+            modelBuilder.Entity("Luman.Busines.Services.Permition.Permition", b =>
                 {
-                    b.HasOne("Luman.DataLayer.EntityModel.Permitions.Permition", null)
+                    b.HasOne("Luman.Busines.Services.Permition.Permition", null)
                         .WithMany("permission")
                         .HasForeignKey("ParentID");
                 });
 
-            modelBuilder.Entity("Luman.DataLayer.EntityModel.Permitions.RolePermission", b =>
+            modelBuilder.Entity("Luman.Busines.Services.Permition.RolePermission", b =>
                 {
-                    b.HasOne("Luman.DataLayer.EntityModel.Permitions.Permition", "permition")
-                        .WithMany("rolePermissions")
-                        .HasForeignKey("PermissionID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Luman.DataLayer.EntityModel.User.Role", "role")
                         .WithMany()
                         .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Luman.Busines.Services.Permition.Permition", "permition")
+                        .WithMany("rolePermissions")
+                        .HasForeignKey("permitionPermissionID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -254,7 +260,7 @@ namespace Luman.DataLayer.Migrations
                     b.Navigation("user");
                 });
 
-            modelBuilder.Entity("Luman.DataLayer.EntityModel.Permitions.Permition", b =>
+            modelBuilder.Entity("Luman.Busines.Services.Permition.Permition", b =>
                 {
                     b.Navigation("permission");
 

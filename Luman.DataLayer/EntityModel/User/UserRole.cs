@@ -16,9 +16,9 @@ namespace Luman.DataLayer.EntityModel.User
 
         public int UserId { get; set; }
 
-        public User user { get; set; }
+        public virtual User user { get; set; }
 
-        public Role role { get; set; }
+        public virtual Role role { get; set; }
 
     }
 }
