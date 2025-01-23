@@ -21,7 +21,8 @@ namespace Luman.DataLayer.Context
         public DbSet<Product> products{ get; set; }
         public DbSet<Role> roles { get; set; }
         public DbSet<UserRole> userRoles { get; set; }
-
+        public DbSet<Category> categories { get; set; }
+        public DbSet<CategoryProduct> categoryProducts { get; set; }
         public DbSet<Permition> permitions  { get; set; }
 
         public DbSet<RolePermission> rolePermissions { get; set; }

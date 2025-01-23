@@ -66,7 +66,6 @@ namespace Luman.Busines.Services.Permission
             return _context.roles.Find(roleId);
         }
 
-       
-                
+   
     }
 }

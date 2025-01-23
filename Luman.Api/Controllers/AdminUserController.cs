@@ -12,13 +12,13 @@ namespace Luman.Api.Controllers
     [Route("api/v{version:apiVersion}/Admin")]
     [ApiController]
     [ApiVersion("2.0")]
-    [PermissionChecker(1)]
-    public class AdminController : ControllerBase
+    //[PermissionChecker(1)]
+    public class AdminUserController : ControllerBase
     {
         private readonly IUserServices _userServices;
         private readonly IPermissionService _permissionService;
 
-        public AdminController(IUserServices userServices,IPermissionService permissionService)
+        public AdminUserController(IUserServices userServices,IPermissionService permissionService)
         {
             _userServices = userServices;
             _permissionService = permissionService;

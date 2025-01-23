@@ -4,6 +4,7 @@ using Luman.DataLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Luman.DataLayer.Migrations
 {
     [DbContext(typeof(LumanContext))]
-    partial class LumanContextModelSnapshot : ModelSnapshot
+    [Migration("20250123175143_EditePro5")]
+    partial class EditePro5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,7 +71,7 @@ namespace Luman.DataLayer.Migrations
                     b.ToTable("rolePermissions");
                 });
 
-            modelBuilder.Entity("Luman.DataLayer.EntityModel.Product.Category", b =>
+            modelBuilder.Entity("Luman.DataLayer.EntityModel.Product.CategoryProduct", b =>
                 {
                     b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
@@ -81,32 +84,14 @@ namespace Luman.DataLayer.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("CategoryId");
-
-                    b.ToTable("categories");
-                });
-
-            modelBuilder.Entity("Luman.DataLayer.EntityModel.Product.CategoryProduct", b =>
-                {
-                    b.Property<int>("CategoryProductId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryProductId"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.HasKey("CategoryProductId");
-
-                    b.HasIndex("CategoryId");
+                    b.HasKey("CategoryId");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("categoryProducts");
+                    b.ToTable("categories");
                 });
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.Product.Product", b =>
@@ -117,6 +102,12 @@ namespace Luman.DataLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
 
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("Image")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -124,10 +115,6 @@ namespace Luman.DataLayer.Migrations
 
                     b.Property<long>("Price")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("imagename")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ProductId");
 
@@ -245,19 +232,11 @@ namespace Luman.DataLayer.Migrations
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.Product.CategoryProduct", b =>
                 {
-                    b.HasOne("Luman.DataLayer.EntityModel.Product.Category", "Category")
-                        .WithMany("CategoryProducts")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Luman.DataLayer.EntityModel.Product.Product", "Product")
-                        .WithMany("CategoryProducts")
+                        .WithMany("Categories")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Category");
 
                     b.Navigation("Product");
                 });
@@ -288,14 +267,9 @@ namespace Luman.DataLayer.Migrations
                     b.Navigation("rolePermissions");
                 });
 
-            modelBuilder.Entity("Luman.DataLayer.EntityModel.Product.Category", b =>
-                {
-                    b.Navigation("CategoryProducts");
-                });
-
             modelBuilder.Entity("Luman.DataLayer.EntityModel.Product.Product", b =>
                 {
-                    b.Navigation("CategoryProducts");
+                    b.Navigation("Categories");
                 });
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.User.Role", b =>

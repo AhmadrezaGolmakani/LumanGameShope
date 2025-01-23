@@ -1,6 +1,7 @@
 using Luman.Api.Document;
 using Luman.Busines.Mapping;
 using Luman.Busines.Services.Permission;
+using Luman.Busines.Services.Product;
 using Luman.Busines.Services.User;
 using Luman.Busines.Utility;
 using Luman.DataLayer.Context;
@@ -37,6 +38,7 @@ builder.Services.AddCors();
 
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 #endregion
 

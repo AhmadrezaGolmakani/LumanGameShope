@@ -1,16 +1,16 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Luman.DataLayer.EntityModel.Product
+namespace Luman.Busines.DTOs.ProductDTO
 {
-    public class Product
+    public class CreateProductDTO
     {
-        [Key]
+
         public int ProductId { get; set; }
 
         [Required]
@@ -22,11 +22,9 @@ namespace Luman.DataLayer.EntityModel.Product
         [Display(Name = "قیمت محصول")]
         public long Price { get; set; }
 
-        public string imagename { get; set; }
+        public IFormFile Imagename { get; set; }
 
-
-        public virtual ICollection<CategoryProduct> CategoryProducts { get; set; }
-
-
+        [Required]
+        public string Categoryname { get; set; }
     }
 }
