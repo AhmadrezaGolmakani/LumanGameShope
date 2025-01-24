@@ -42,9 +42,20 @@ namespace Luman.Busines.Services.Product
             return Save();
         }
 
-        public bool EditeProduct()
+        
+
+        public bool DeleteProduct(int proId)
         {
-            throw new NotImplementedException();
+            var product = GetproductById(proId);
+            _context.products.Remove(product);
+            return Save();
+        }
+
+        public bool EditeProduct(DataLayer.EntityModel.Product.Product product)
+        {
+            _context.Update(product);
+            return Save();
+            
         }
 
         public List<Category> GetAllCategories()
@@ -67,9 +78,9 @@ namespace Luman.Busines.Services.Product
             return _context.categories.SingleOrDefault(c => c.Name == name).CategoryId;
         }
 
-        public int GetProductId(int proId)
+        public DataLayer.EntityModel.Product.Product GetproductById(int proid)
         {
-            return _context.products.Find(proId).ProductId;
+            return _context.products.Find(proid);
         }
 
         public int GetProductid(int productId)
@@ -77,10 +88,6 @@ namespace Luman.Busines.Services.Product
             return _context.products.Find(productId).ProductId;
         }
 
-        public int GetProductid(string name)
-        {
-            throw new NotImplementedException();
-        }
 
         public bool Save()
         {

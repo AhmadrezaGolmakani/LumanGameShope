@@ -49,7 +49,7 @@ namespace Luman.Api.Controllers
 
 
         [HttpPost("AddProduct")]
-        public IActionResult AddProduct([FromQuery] CreateProductDTO model)
+        public IActionResult AddProduct([FromForm] CreateProductDTO model)
         {
             if (!ModelState.IsValid)
             {
@@ -75,15 +75,13 @@ namespace Luman.Api.Controllers
                  model.Imagename.CopyToAsync(stream);
             }
         
-            string shortName = NameGenerator.GenerateShortName(10);
-
 
             // ایجاد مدل محصول
             var product = new Product
             {
                 Name = model.Name,
                 Price = model.Price,
-                imagename = shortName,
+                imagename = fileName,
                 
             };
 
@@ -92,7 +90,7 @@ namespace Luman.Api.Controllers
                 _productService.addgroup(product, categoryid);
             }
 
-            return Ok(new { Message = "محصول با موفقیت افزوده شد", ProductId = product.ProductId });
+            return Ok(new { Message = "محصول با موفقیت افزوده شد", ProductId = product.ProductId , Name = product.Name  });
         }
 
 
@@ -101,6 +99,70 @@ namespace Luman.Api.Controllers
         {
             return Ok(_productService.GetAllProductForAdmin());
         }
+
+
+
+        [HttpPatch("EditeProduct/{proid:int}")]
+        public IActionResult EditeProduct([FromForm] EditeProduct model , int proid)
+        {
+            if (!ModelState.IsValid) return BadRequest(model);
+
+
+            
+
+            var product = _productService.GetproductById(proid);
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.Imagename.FileName);
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+
+
+
+            if (model.Imagename != null )
+            {
+
+                if (!string.IsNullOrEmpty(product.imagename))
+                {
+                    // مسیر فیزیکی فایل در سرور
+                    var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", product.imagename);
+
+                    // حذف فایل در صورت وجود
+                    if (System.IO.File.Exists(imagePath))
+                    {
+                        System.IO.File.Delete(imagePath);
+                    }
+                }
+
+
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+                var filePath = Path.Combine(folderPath, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    model.Imagename.CopyToAsync(stream);
+                }
+
+            }
+
+            product.imagename = fileName;
+            product.Name = model.Name;
+            product.Price = model.Price;
+
+
+           _productService.EditeProduct(product);
+            return Ok();
+
+        }
+
+
+        [HttpDelete("DeleteProduct/{productId:int}")]
+        public IActionResult DeleteProduct(int productId)
+        {
+            _productService.DeleteProduct(productId);
+            return Ok(new { Message = "حذف با موفقیت انجام شد" , productId  });
+        }
+
 
         #endregion
 

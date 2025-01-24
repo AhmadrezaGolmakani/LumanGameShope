@@ -27,4 +27,21 @@ namespace Luman.Busines.DTOs.ProductDTO
         [Required]
         public string Categoryname { get; set; }
     }
+
+    public class EditeProduct
+    {
+
+        [Required]
+        [Display(Name = "نام محصول")]
+        [MaxLength(50, ErrorMessage = "{0}نمیتواند بیتر از {1}  کاراکتر باشد .")]
+        public string Name { get; set; }
+
+        [Required]
+        [Display(Name = "قیمت محصول")]
+        public long Price { get; set; }
+
+        public IFormFile? Imagename { get; set; }
+
+
+    }
 }
