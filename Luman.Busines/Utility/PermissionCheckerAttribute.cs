@@ -1,4 +1,4 @@
-﻿using Luman.Busines.Services.Permission;
+﻿using Luman.Busines.Services.PermissionService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;

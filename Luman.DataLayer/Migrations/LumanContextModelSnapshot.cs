@@ -22,6 +22,97 @@ namespace Luman.DataLayer.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Luman.DataLayer.EntityModel.Orders.Discount", b =>
+                {
+                    b.Property<int>("DiscountId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DiscountId"));
+
+                    b.Property<string>("DiscountCode")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("DiscountPercent")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UsableCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("DiscountId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("discounts");
+                });
+
+            modelBuilder.Entity("Luman.DataLayer.EntityModel.Orders.Order", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsFinaly")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("OrderSum")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("orders");
+                });
+
+            modelBuilder.Entity("Luman.DataLayer.EntityModel.Orders.OrderDetails", b =>
+                {
+                    b.Property<int>("DetailId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DetailId"));
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("Price")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DetailId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("orderDetails");
+                });
+
             modelBuilder.Entity("Luman.DataLayer.EntityModel.Permitions.Permition", b =>
                 {
                     b.Property<int>("PermissionID")
@@ -217,6 +308,45 @@ namespace Luman.DataLayer.Migrations
                     b.ToTable("userRoles");
                 });
 
+            modelBuilder.Entity("Luman.DataLayer.EntityModel.Orders.Discount", b =>
+                {
+                    b.HasOne("Luman.DataLayer.EntityModel.Product.Product", "product")
+                        .WithMany("discounts")
+                        .HasForeignKey("ProductId");
+
+                    b.Navigation("product");
+                });
+
+            modelBuilder.Entity("Luman.DataLayer.EntityModel.Orders.Order", b =>
+                {
+                    b.HasOne("Luman.DataLayer.EntityModel.User.User", "user")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("user");
+                });
+
+            modelBuilder.Entity("Luman.DataLayer.EntityModel.Orders.OrderDetails", b =>
+                {
+                    b.HasOne("Luman.DataLayer.EntityModel.Orders.Order", "order")
+                        .WithMany("orderDetails")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Luman.DataLayer.EntityModel.Product.Product", "product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("order");
+
+                    b.Navigation("product");
+                });
+
             modelBuilder.Entity("Luman.DataLayer.EntityModel.Permitions.Permition", b =>
                 {
                     b.HasOne("Luman.DataLayer.EntityModel.Permitions.Permition", null)
@@ -281,6 +411,11 @@ namespace Luman.DataLayer.Migrations
                     b.Navigation("user");
                 });
 
+            modelBuilder.Entity("Luman.DataLayer.EntityModel.Orders.Order", b =>
+                {
+                    b.Navigation("orderDetails");
+                });
+
             modelBuilder.Entity("Luman.DataLayer.EntityModel.Permitions.Permition", b =>
                 {
                     b.Navigation("permission");
@@ -296,6 +431,8 @@ namespace Luman.DataLayer.Migrations
             modelBuilder.Entity("Luman.DataLayer.EntityModel.Product.Product", b =>
                 {
                     b.Navigation("CategoryProducts");
+
+                    b.Navigation("discounts");
                 });
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.User.Role", b =>

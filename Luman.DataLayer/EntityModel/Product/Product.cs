@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Luman.DataLayer.EntityModel.Orders;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -26,6 +27,7 @@ namespace Luman.DataLayer.EntityModel.Product
 
 
         public virtual ICollection<CategoryProduct> CategoryProducts { get; set; }
+        public virtual ICollection<Discount> discounts { get; set; }
 
 
     }

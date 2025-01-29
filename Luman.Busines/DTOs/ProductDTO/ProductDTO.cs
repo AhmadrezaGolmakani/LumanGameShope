@@ -11,7 +11,6 @@ namespace Luman.Busines.DTOs.ProductDTO
     public class CreateProductDTO
     {
 
-        public int ProductId { get; set; }
 
         [Required]
         [Display(Name = "نام محصول")]

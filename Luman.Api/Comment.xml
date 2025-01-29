@@ -4,6 +4,29 @@
         <name>Luman.Api</name>
     </assembly>
     <members>
+        <member name="M:Luman.Api.Controllers.Admin.DiscountController.AddDiscount(Luman.Busines.DTOs.OrderDTO.CreateDiscountDTO,System.String)">
+            <summary>
+            افزودن  کد تخفیف 
+            </summary>
+            <param name="model">مدل ورودی (تاریخ ها به شمسی وارد شود)</param>
+            <param name="Productname">نام محصول اگر کد تخفیف برای محصولی خاص است</param>
+            <returns></returns>
+        </member>
+        <member name="M:Luman.Api.Controllers.Admin.DiscountController.GetAllDiscount">
+            <summary>
+            دریافت همه کد تخفیف ها
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Luman.Api.Controllers.Admin.DiscountController.UpdateDiscount(System.Int32,System.String,System.String)">
+            <summary>
+            ویرایش کد تخفیف
+            </summary>
+            <param name="discountid">ایدی کد تخفیف</param>
+            <param name="stDate">تاریخ شروع(به شمسی وارد شود) </param>
+            <param name="edDate">تاریخ پایان(به شمسی وارد شود)</param>
+            <returns></returns>
+        </member>
         <member name="M:Luman.Api.Controllers.UserAccountController.Register(Luman.Busines.DTOs.UserDTO.RegisterUser)">
             <summary>
             ثبت نام کاربر
@@ -34,11 +57,11 @@
             <param name="userid">ایدی کاربر اجباری است</param>
             <returns></returns>
         </member>
-        <member name="M:Luman.Api.Controllers.UserAccountController.GetInfoUser(System.Int32)">
+        <member name="M:Luman.Api.Controllers.UserAccountController.GetInfoUser(System.String)">
             <summary>
             گرفتن اطلاعات برای حساب کاربری
             </summary>
-            <param name="id">ایدی کاربر </param>
+            <param name="username">یوزرنیم کاربر </param>
             <returns></returns>  
         </member>
     </members>

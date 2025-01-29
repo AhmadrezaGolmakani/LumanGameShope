@@ -1,8 +1,9 @@
 using Luman.Api.Document;
 using Luman.Busines.Mapping;
-using Luman.Busines.Services.Permission;
-using Luman.Busines.Services.Product;
-using Luman.Busines.Services.User;
+using Luman.Busines.Services.OrderService;
+using Luman.Busines.Services.PermissionService;
+using Luman.Busines.Services.ProductService;
+using Luman.Busines.Services.UserService;
 using Luman.Busines.Utility;
 using Luman.DataLayer.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,14 +15,16 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthorization();
 
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles); builder.Services.AddEndpointsApiExplorer();
 
 
 #region SQL
@@ -39,6 +42,7 @@ builder.Services.AddCors();
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IOrderServices, OrderServices>();
 
 #endregion
 
@@ -124,23 +128,37 @@ builder.Services.AddAutoMapper(typeof(MapperDTO));
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI(x =>
+//    {
+//        var provider = app.Services.CreateScope().ServiceProvider
+//                .GetRequiredService<IApiVersionDescriptionProvider>();
+
+//        foreach (var item in provider.ApiVersionDescriptions)
+//        {
+//            x.SwaggerEndpoint($"swagger/{item.GroupName}/swagger.json", item.GroupName.ToString());
+
+//        }
+//        //x.SwaggerEndpoint("/swagger/VilaOpenApi/swagger.json" , "Vila");
+//        x.RoutePrefix = "";
+//    });
+//}
+app.UseSwagger();
+app.UseSwaggerUI(x =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(x =>
+    var provider = app.Services.CreateScope().ServiceProvider
+            .GetRequiredService<IApiVersionDescriptionProvider>();
+
+    foreach (var item in provider.ApiVersionDescriptions)
     {
-        var provider = app.Services.CreateScope().ServiceProvider
-                .GetRequiredService<IApiVersionDescriptionProvider>();
+        x.SwaggerEndpoint($"swagger/{item.GroupName}/swagger.json", item.GroupName.ToString());
 
-        foreach (var item in provider.ApiVersionDescriptions)
-        {
-            x.SwaggerEndpoint($"swagger/{item.GroupName}/swagger.json", item.GroupName.ToString());
-
-        }
-        //x.SwaggerEndpoint("/swagger/VilaOpenApi/swagger.json" , "Vila");
-        x.RoutePrefix = "";
-    });
-}
+    }
+    //x.SwaggerEndpoint("/swagger/VilaOpenApi/swagger.json" , "Vila");
+    x.RoutePrefix = "";
+});
 app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
 app.UseHttpsRedirection();
@@ -149,5 +167,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 app.Run();

@@ -43,7 +43,6 @@ namespace Luman.DataLayer.EntityModel.User
 
 
         [NotMapped]
-        [JsonIgnore]
         public string JwtSecret { get; set; }
 
         [JsonIgnore]

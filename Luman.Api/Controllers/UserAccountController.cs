@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
 using Luman.Busines.DTOs.UserDTO;
-using Luman.Busines.Services.Permission;
-using Luman.Busines.Services.User;
+using Luman.Busines.Services.PermissionService;
+using Luman.Busines.Services.UserService;
 using Luman.Busines.Utility;
 using Luman.DataLayer.EntityModel.User;
 using Luman.DataLayer.Migrations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 
 namespace Luman.Api.Controllers
 {
@@ -45,9 +46,9 @@ namespace Luman.Api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(model);
 
-            if (_services.IsExsitEmail(model.Email)) return BadRequest(model);
+            if (!_services.IsExsitEmail(model.Email)) return BadRequest(model);
 
-            if (_services.IsExsitUserName(model.UserName)) return BadRequest(model);
+            if (!_services.IsExsitUserName(model.UserName)) return BadRequest(model);
 
             User user = new()
             {
@@ -91,9 +92,9 @@ namespace Luman.Api.Controllers
             var user = _services.LoginUser(model.UserName, model.Password);
             if (user == null)
             {
-                return NotFound(new { error = "کاربر یافت نشد" });
+                return NotFound(new { error = "کاربر یافت نشد" , ErrorCodes = 404 });
             }
-            return Ok(user);
+            return Ok(new {Message = "با موفقیت وارد شدید" , UserId = user.UserId , UserName = user.UserName , JwtToken = user.JwtSecret });
         }
 
         /// <summary>
@@ -149,22 +150,22 @@ namespace Luman.Api.Controllers
         /// <summary>
         /// گرفتن اطلاعات برای حساب کاربری
         /// </summary>
-        /// <param name="id">ایدی کاربر </param>
+        /// <param name="username">یوزرنیم کاربر </param>
         /// <returns></returns>  
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(401)]
         [ProducesResponseType(400)]
-        [HttpGet("UserPanel/{id:int}")]
-        public IActionResult GetInfoUser(int id)
+        [HttpGet("UserPanel/{username}")]
+        public IActionResult GetInfoUser(string username)
         {
-            var user = _services.GetUserById(id);
+            var user = _services.GetUserByUsername(username);
 
             if (user == null) return NotFound();
 
             var model = _mapper.Map<User>(user);
 
-            var panel = _services.GetUserInformation(model.UserName);
+            var panel = _services.GetUserInformation(username);
 
             return Ok(panel);
         }

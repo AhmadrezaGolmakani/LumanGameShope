@@ -1,4 +1,5 @@
-﻿using Luman.DataLayer.EntityModel.Permitions;
+﻿using Luman.DataLayer.EntityModel.Orders;
+using Luman.DataLayer.EntityModel.Permitions;
 using Luman.DataLayer.EntityModel.Product;
 using Luman.DataLayer.EntityModel.User;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +25,9 @@ namespace Luman.DataLayer.Context
         public DbSet<Category> categories { get; set; }
         public DbSet<CategoryProduct> categoryProducts { get; set; }
         public DbSet<Permition> permitions  { get; set; }
-
+        public DbSet<Discount> discounts  { get; set; }
+        public DbSet<Order> orders  { get; set; }
+        public DbSet<OrderDetails> orderDetails { get; set; }
         public DbSet<RolePermission> rolePermissions { get; set; }
 
     }
