@@ -174,6 +174,9 @@ namespace Luman.Busines.Services.UserService
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name , user.UserName.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()), // ذخیره userId در توکن
+                    new Claim(ClaimTypes.Email, user.Email.ToString()) // ذخیره userId در توکن
+
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
@@ -224,6 +227,12 @@ namespace Luman.Busines.Services.UserService
         public User GetUserById(int userid)
         {
             return _context.users.Find(userid);
+        }
+
+        public bool IsExsitUserById(int userid)
+        {
+            _context.users.Any(u=>u.UserId == userid);
+            return true;
         }
     }
 }

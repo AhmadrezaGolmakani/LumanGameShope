@@ -8,7 +8,14 @@ namespace Luman.Busines.DTOs.OrderDTO
 {
     public enum DiscountUseType
     {
-        Success, ExpierDate, NotFound, Finished, UserUsed
-
+        NotFound,
+        NotStarted,
+        Expired,
+        Finished,
+        OrderNotFound,
+        InvalidOrderAmount,
+        InvalidPercent,
+        Success,
+        InvalidProduct
     }
 }

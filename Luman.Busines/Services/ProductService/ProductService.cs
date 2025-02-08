@@ -1,6 +1,8 @@
 ﻿using Luman.Busines.DTOs.ProductDTO;
 using Luman.DataLayer.Context;
 using Luman.DataLayer.EntityModel.Product;
+using Luman.DataLayer.EntityModel.User;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +39,21 @@ namespace Luman.Busines.Services.ProductService
             Save();
         }
 
+        public void AddToFavorite(int proid, int userid)
+        {
+           
+            // افزودن به دیتابیس
+            FavoriteProduct favoriteProduct = new()
+            {
+                ProductId = proid,
+                UserId = userid,
+                AddedDate = DateTime.Now
+            };
+
+            _context.favoriteProducts.Add(favoriteProduct);
+            _context.SaveChanges();
+        }
+
         public bool CreateProduct(Product model)
         {
             _context.products.Add(model);
@@ -59,6 +76,12 @@ namespace Luman.Busines.Services.ProductService
 
         }
 
+        public bool existingFavorite(int userid, int proid)
+        {
+            _context.favoriteProducts.FirstOrDefault(f=>f.UserId == userid && f.ProductId == proid);
+            return true;
+        }
+
         public List<Category> GetAllCategories()
         {
             return _context.categories.ToList();
@@ -66,7 +89,7 @@ namespace Luman.Busines.Services.ProductService
 
         public List<Product> GetAllProduct()
         {
-            throw new NotImplementedException();
+            return _context.products.ToList();
         }
 
         public List<Product> GetAllProductForAdmin()
@@ -89,6 +112,30 @@ namespace Luman.Busines.Services.ProductService
 
             return _context.products.SingleOrDefault(c => c.Name == name).ProductId;
 
+        }
+
+        public List<Product> GetUserFavorites(int userid)
+        {
+            bool userExists =  _context.users.Any(u => u.UserId == userid);
+            if (!userExists)
+            {
+                throw new Exception("کاربر یافت نشد.");
+            }
+
+            // گرفتن لیست علاقه‌مندی‌ها
+            var favorites =  _context.favoriteProducts
+                .Where(fp => fp.UserId == userid)
+                .Include(fp => fp.Product) // بارگذاری اطلاعات محصول
+                .Select(fp => fp.Product)
+                .ToList();
+
+            return favorites;
+        }
+
+        public bool IsExistproduct(int proid)
+        {
+            _context.products.Any(p=>p.ProductId == proid);
+            return true;
         }
 
         public bool Save()

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Luman.DataLayer.EntityModel.Product;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -47,5 +48,8 @@ namespace Luman.DataLayer.EntityModel.User
 
         [JsonIgnore]
         public  List<UserRole> userRoles { get; set; }
+
+        public virtual ICollection<FavoriteProduct> FavoriteProducts { get; set; }
+
     }
 }

@@ -73,7 +73,8 @@ namespace Luman.Api.Controllers.Admin
                     UsableCount = model.UsableCount,
                     StartDate = startDate,
                     EndDate = endDate,
-                    ProductId = productid
+                    ProductId = productid,
+                    IsForSpecificProduct = true,
                 };
 
                 if (_orderServices.IsExistDiscount(model.DiscountCode))

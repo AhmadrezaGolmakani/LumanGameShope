@@ -4,6 +4,7 @@ using Luman.DataLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Luman.DataLayer.Migrations
 {
     [DbContext(typeof(LumanContext))]
-    partial class LumanContextModelSnapshot : ModelSnapshot
+    [Migration("20250129150602_initedite")]
+    partial class initedite
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -201,32 +204,6 @@ namespace Luman.DataLayer.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("categoryProducts");
-                });
-
-            modelBuilder.Entity("Luman.DataLayer.EntityModel.Product.FavoriteProduct", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AddedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("favoriteProducts");
                 });
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.Product.Product", b =>
@@ -421,25 +398,6 @@ namespace Luman.DataLayer.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Luman.DataLayer.EntityModel.Product.FavoriteProduct", b =>
-                {
-                    b.HasOne("Luman.DataLayer.EntityModel.Product.Product", "Product")
-                        .WithMany("FavoriteProducts")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Luman.DataLayer.EntityModel.User.User", "User")
-                        .WithMany("FavoriteProducts")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Luman.DataLayer.EntityModel.User.UserRole", b =>
                 {
                     b.HasOne("Luman.DataLayer.EntityModel.User.Role", "role")
@@ -480,8 +438,6 @@ namespace Luman.DataLayer.Migrations
                 {
                     b.Navigation("CategoryProducts");
 
-                    b.Navigation("FavoriteProducts");
-
                     b.Navigation("discounts");
                 });
 
@@ -492,8 +448,6 @@ namespace Luman.DataLayer.Migrations
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.User.User", b =>
                 {
-                    b.Navigation("FavoriteProducts");
-
                     b.Navigation("userRoles");
                 });
 #pragma warning restore 612, 618

@@ -29,6 +29,9 @@ namespace Luman.DataLayer.Context
         public DbSet<Order> orders  { get; set; }
         public DbSet<OrderDetails> orderDetails { get; set; }
         public DbSet<RolePermission> rolePermissions { get; set; }
+        public DbSet<FavoriteProduct> favoriteProducts { get; set; }
+
+       
 
     }
 }

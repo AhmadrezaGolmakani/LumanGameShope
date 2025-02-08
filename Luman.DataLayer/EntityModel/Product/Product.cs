@@ -28,6 +28,7 @@ namespace Luman.DataLayer.EntityModel.Product
 
         public virtual ICollection<CategoryProduct> CategoryProducts { get; set; }
         public virtual ICollection<Discount> discounts { get; set; }
+        public virtual ICollection<FavoriteProduct> FavoriteProducts { get; set; }
 
 
     }

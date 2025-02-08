@@ -25,7 +25,9 @@ namespace Luman.DataLayer.EntityModel.Orders
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
 
-        // مشخص می‌کند که کد تخفیف برای یک محصول خاص است یا تمامی محصولات
+        public bool IsForSpecificProduct { get; set; } = false;
+
+        // شناسه محصول خاص (در صورت فعال بودن تخفیف برای محصول خاص)
         public int? ProductId { get; set; }
 
         // ناوبری به محصول (در صورت وجود)

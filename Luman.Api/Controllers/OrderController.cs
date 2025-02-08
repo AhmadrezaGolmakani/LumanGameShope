@@ -1,4 +1,5 @@
-﻿using Luman.Busines.Services.OrderService;
+﻿using Luman.Busines.DTOs.OrderDTO;
+using Luman.Busines.Services.OrderService;
 using Luman.Busines.Services.ProductService;
 using Luman.Busines.Services.UserService;
 using Microsoft.AspNetCore.Http;
@@ -54,5 +55,14 @@ namespace Luman.Api.Controllers
         {
             return Ok(_orderservice.GetAllOrders(User.Identity.Name));
         }
+
+
+        [HttpPost("usediscount")]
+        public IActionResult UseDiscount([FromBody]UseDiscountDTO model)
+        {
+            return Ok(_orderservice.UseDiscount(model.Code , model.orderId , model.proid));
+        }
+
+       
     }
 }

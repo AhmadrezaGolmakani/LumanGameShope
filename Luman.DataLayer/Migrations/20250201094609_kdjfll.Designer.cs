@@ -4,6 +4,7 @@ using Luman.DataLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Luman.DataLayer.Migrations
 {
     [DbContext(typeof(LumanContext))]
-    partial class LumanContextModelSnapshot : ModelSnapshot
+    [Migration("20250201094609_kdjfll")]
+    partial class kdjfll
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -424,13 +427,13 @@ namespace Luman.DataLayer.Migrations
             modelBuilder.Entity("Luman.DataLayer.EntityModel.Product.FavoriteProduct", b =>
                 {
                     b.HasOne("Luman.DataLayer.EntityModel.Product.Product", "Product")
-                        .WithMany("FavoriteProducts")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Luman.DataLayer.EntityModel.User.User", "User")
-                        .WithMany("FavoriteProducts")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -480,8 +483,6 @@ namespace Luman.DataLayer.Migrations
                 {
                     b.Navigation("CategoryProducts");
 
-                    b.Navigation("FavoriteProducts");
-
                     b.Navigation("discounts");
                 });
 
@@ -492,8 +493,6 @@ namespace Luman.DataLayer.Migrations
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.User.User", b =>
                 {
-                    b.Navigation("FavoriteProducts");
-
                     b.Navigation("userRoles");
                 });
 #pragma warning restore 612, 618

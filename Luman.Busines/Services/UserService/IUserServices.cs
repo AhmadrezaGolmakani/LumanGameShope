@@ -19,6 +19,7 @@ namespace Luman.Busines.Services.UserService
         bool IsCorrectpass(string username, string pass);
 
         bool IsExsitUserName(string username);
+        bool IsExsitUserById(int userid);
         bool IsExsitEmail(string email);
         bool UpdateUser(User user);
         User GetUserByUserName(string username);

@@ -1,4 +1,5 @@
-﻿using Luman.DataLayer.EntityModel.Orders;
+﻿using Luman.Busines.DTOs.OrderDTO;
+using Luman.DataLayer.EntityModel.Orders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace Luman.Busines.Services.OrderService
     public interface IOrderServices
     {
         #region discount
+        DiscountUseType UseDiscount(string code, int orderId , int proid);
 
         bool AddDiscount(Discount discount);
         List<Discount> GetAllDiscounts();

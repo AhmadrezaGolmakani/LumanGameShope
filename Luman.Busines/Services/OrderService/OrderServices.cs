@@ -1,4 +1,5 @@
-﻿using Luman.Busines.Services.UserService;
+﻿using Luman.Busines.DTOs.OrderDTO;
+using Luman.Busines.Services.UserService;
 using Luman.DataLayer.Context;
 using Luman.DataLayer.EntityModel.Orders;
 using Microsoft.EntityFrameworkCore;
@@ -150,5 +151,67 @@ namespace Luman.Busines.Services.OrderService
             _context.orders.Update(order);
             _context.SaveChanges();
         }
+
+        public DiscountUseType UseDiscount(string code, int orderId , int proid)
+        {
+            var discount = _context.discounts.FirstOrDefault(d => d.DiscountCode == code);
+            var orderdetails = _context.orders
+    .Include(o => o.orderDetails)
+    .FirstOrDefault(o => o.OrderId == orderId);
+
+            if (discount == null)
+                return DiscountUseType.NotFound;
+
+            if (discount.StartDate != null && discount.StartDate > DateTime.Now)
+                return DiscountUseType.NotStarted;
+
+            if (discount.EndDate != null && discount.EndDate < DateTime.Now)
+                return DiscountUseType.Expired;
+
+            // چک کردن محدودیت تعداد استفاده فقط اگر مقدار مشخص باشد و معتبر باشد
+            if (discount.UsableCount.HasValue && discount.UsableCount.Value <= 0)
+                return DiscountUseType.Finished;
+
+            var order = GetOrderById(orderId);
+            if (order == null)
+                return DiscountUseType.OrderNotFound;
+
+            if (order.OrderSum <= 0)
+                return DiscountUseType.InvalidOrderAmount;
+
+            if (discount.DiscountPercent < 0 || discount.DiscountPercent > 100)
+                return DiscountUseType.InvalidPercent;
+
+            // چک کردن محدودیت محصول برای نوع اول تخفیف
+            if (discount.IsForSpecificProduct)
+            {
+                if (orderdetails == null || !order.orderDetails.Any())
+                {
+                    return DiscountUseType.InvalidProduct;
+                }
+
+                if (proid == null || !order.orderDetails.Any(oi => oi.ProductId == proid))
+                {
+                    return DiscountUseType.InvalidProduct;
+                }
+            }
+
+            // محاسبه و اعمال تخفیف
+            long discountAmount = (order.OrderSum * discount.DiscountPercent) / 100;
+            order.OrderSum -= discountAmount;
+
+            UpdateOrder(order);
+
+            // کاهش تعداد دفعات استفاده در صورت محدودیت
+            if (discount.UsableCount.HasValue)
+            {
+                discount.UsableCount -= 1;
+            }
+
+            _context.SaveChanges();
+
+            return DiscountUseType.Success;
+        }
+
     }
 }

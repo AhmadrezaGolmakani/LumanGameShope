@@ -2,6 +2,7 @@
 using Luman.Busines.Services.ProductService;
 using Luman.Busines.Utility;
 using Luman.DataLayer.EntityModel.Product;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace Luman.Api.Controllers.Admin
     [Route("api/v{version:apiVersion}/Admin")]
     [ApiController]
     [ApiVersion("2.0")]
+    
     public class AdminProductController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -62,7 +64,7 @@ namespace Luman.Api.Controllers.Admin
             {
                 return BadRequest("فایلی وارد نشده است");
             }
-            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "C:Users/ASUS/Desktop/Images" , "uploads");
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -116,7 +118,7 @@ namespace Luman.Api.Controllers.Admin
 
             var product = _productService.GetproductById(proid);
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.Imagename.FileName);
-            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "\"C:Users/ASUS/Desktop/Images\"", "uploads");
 
 
 
@@ -126,7 +128,7 @@ namespace Luman.Api.Controllers.Admin
                 if (!string.IsNullOrEmpty(product.imagename))
                 {
                     // مسیر فیزیکی فایل در سرور
-                    var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", product.imagename);
+                    var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "C:Users/ASUS/Desktop/Images/uploads", product.imagename);
 
                     // حذف فایل در صورت وجود
                     if (System.IO.File.Exists(imagePath))

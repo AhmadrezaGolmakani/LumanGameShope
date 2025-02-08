@@ -41,6 +41,14 @@ namespace Luman.Busines.Services.ProductService
 
         int GetProductidByname(string name);
 
+        void AddToFavorite(int proid , int userid);
+
+        bool IsExistproduct(int proid);
+
+        bool existingFavorite(int userid , int proid);
+
+        List<Product> GetUserFavorites(int userid);
+
         bool Save();
 
         #endregion
