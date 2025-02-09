@@ -1,4 +1,4 @@
-@Luman.Api_HostAddress = http://localhost:5212
+@Luman.Api_HostAddress = https://localhost:7103
 
 GET {{Luman.Api_HostAddress}}
 Accept: application/json

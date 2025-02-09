@@ -1,4 +1,4 @@
-using Luman.Api.Document;
+﻿using Luman.Api.Document;
 using Luman.Busines.Mapping;
 using Luman.Busines.Services.OrderService;
 using Luman.Busines.Services.PermissionService;
@@ -14,7 +14,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Configuration;
+using System.Net;
 using System.Text;
+
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,11 +30,16 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles); builder.Services.AddEndpointsApiExplorer();
 
 
+
 #region SQL
 builder.Services.AddDbContext<LumanContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("luman"));
 });
+
+
+
+
 
 #endregion
 

@@ -1,54 +1,43 @@
 ﻿using Luman.Busines.Services.PermissionService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System;
+using Microsoft.Extensions.DependencyInjection;
 
 public class PermissionCheckerAttribute : Attribute, IAuthorizationFilter
 {
     private readonly int _permissionId;
-    private IPermissionService _permissionService;
 
-    // Constructor to inject permissionId
+    // دریافت شناسه دسترسی مورد نظر از طریق Attribute
     public PermissionCheckerAttribute(int permissionId)
     {
         _permissionId = permissionId;
     }
 
-    // This method is called to perform the authorization logic
     public void OnAuthorization(AuthorizationFilterContext context)
     {
-        // Getting the IPermissionService via DI (Dependency Injection)
-        _permissionService = (IPermissionService)context.HttpContext.RequestServices.GetService(typeof(IPermissionService));
-
-        if (context.HttpContext.User.Identity.IsAuthenticated)
+        if (context.HttpContext.User.Identity?.IsAuthenticated != true)
         {
-            string userName = context.HttpContext.User.Identity.Name;
-
-            // Check if the user has the required permission
-            if (!_permissionService.CheckPermission(_permissionId, userName))
-            {
-                // If user does not have permission, return a 403 Forbidden response
-                context.Result = new ObjectResult(new
-                {
-                    Message = "Access Denied",
-                    StatusCode = 403
-                })
-                {
-                    StatusCode = 403 // Forbidden
-                };
-            }
+            context.Result = new UnauthorizedResult(); // 401 Unauthorized
+            return;
         }
-        else
+
+        // گرفتن سرویس از طریق Service Locator
+        var permissionService = context.HttpContext.RequestServices.GetService<IPermissionService>();
+
+        if (permissionService == null)
         {
-            // If the user is not authenticated, return a 401 Unauthorized response
-            context.Result = new ObjectResult(new
-            {
-                Message = "Unauthorized",
-                StatusCode = 401
-            })
-            {
-                StatusCode = 401 // Unauthorized
-            };
+            context.Result = new StatusCodeResult(500); // خطای داخلی سرور
+            return;
+        }
+
+        string userName = context.HttpContext.User.Identity.Name;
+
+        // بررسی دسترسی کاربر
+        bool hasPermission = permissionService.CheckPermission(_permissionId, userName);
+
+        if (!hasPermission)
+        {
+            context.Result = new ForbidResult(); // 403 Forbidden
         }
     }
 }
