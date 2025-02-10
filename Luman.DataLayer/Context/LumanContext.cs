@@ -31,7 +31,15 @@ namespace Luman.DataLayer.Context
         public DbSet<RolePermission> rolePermissions { get; set; }
         public DbSet<FavoriteProduct> favoriteProducts { get; set; }
 
-       
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+
+           
+        }
+
+
 
     }
 }

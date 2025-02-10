@@ -4,6 +4,7 @@ using Luman.DataLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Luman.DataLayer.Migrations
 {
     [DbContext(typeof(LumanContext))]
-    partial class LumanContextModelSnapshot : ModelSnapshot
+    [Migration("20250210150821_8751021")]
+    partial class _8751021
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,7 +60,7 @@ namespace Luman.DataLayer.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("discounts", (string)null);
+                    b.ToTable("discounts");
                 });
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.Orders.Order", b =>
@@ -84,7 +87,7 @@ namespace Luman.DataLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("orders", (string)null);
+                    b.ToTable("orders");
                 });
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.Orders.OrderDetails", b =>
@@ -113,7 +116,7 @@ namespace Luman.DataLayer.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("orderDetails", (string)null);
+                    b.ToTable("orderDetails");
                 });
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.Permitions.Permition", b =>
@@ -136,7 +139,7 @@ namespace Luman.DataLayer.Migrations
 
                     b.HasIndex("ParentID");
 
-                    b.ToTable("permitions", (string)null);
+                    b.ToTable("permitions");
                 });
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.Permitions.RolePermission", b =>
@@ -159,7 +162,7 @@ namespace Luman.DataLayer.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("rolePermissions", (string)null);
+                    b.ToTable("rolePermissions");
                 });
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.Product.Category", b =>
@@ -177,7 +180,7 @@ namespace Luman.DataLayer.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("categories", (string)null);
+                    b.ToTable("categories");
                 });
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.Product.CategoryProduct", b =>
@@ -200,7 +203,7 @@ namespace Luman.DataLayer.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("categoryProducts", (string)null);
+                    b.ToTable("categoryProducts");
                 });
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.Product.FavoriteProduct", b =>
@@ -226,7 +229,7 @@ namespace Luman.DataLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("favoriteProducts", (string)null);
+                    b.ToTable("favoriteProducts");
                 });
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.Product.Product", b =>
@@ -251,7 +254,7 @@ namespace Luman.DataLayer.Migrations
 
                     b.HasKey("ProductId");
 
-                    b.ToTable("products", (string)null);
+                    b.ToTable("products");
                 });
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.User.Role", b =>
@@ -268,7 +271,7 @@ namespace Luman.DataLayer.Migrations
 
                     b.HasKey("RoleId");
 
-                    b.ToTable("roles", (string)null);
+                    b.ToTable("roles");
                 });
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.User.User", b =>
@@ -311,7 +314,7 @@ namespace Luman.DataLayer.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("users", (string)null);
+                    b.ToTable("users");
                 });
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.User.UserRole", b =>
@@ -334,7 +337,7 @@ namespace Luman.DataLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("userRoles", (string)null);
+                    b.ToTable("userRoles");
                 });
 
             modelBuilder.Entity("Luman.DataLayer.EntityModel.Orders.Discount", b =>

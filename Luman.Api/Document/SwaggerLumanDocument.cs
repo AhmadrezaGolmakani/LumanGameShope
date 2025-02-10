@@ -23,8 +23,16 @@ namespace Luman.Api.Document
                 options.SwaggerDoc(item.GroupName,
                      new OpenApiInfo()
                      {
-                         Title = $"Vila Api Version {item.ApiVersion}",
-                         Version = item.ApiVersion.ToString()
+                         
+                         Title = $"Luman Api Version {item.ApiVersion}",
+                         Version = item.ApiVersion.ToString(),
+                         Contact = new OpenApiContact()
+                         {
+                             Name = "Ahmadreza golmakani nia",
+                             Email = "argolmakani@gmail.com",
+
+                         }
+                         
                      });
             }
 

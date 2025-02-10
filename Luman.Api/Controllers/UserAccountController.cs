@@ -62,6 +62,8 @@ namespace Luman.Api.Controllers
                  
             };
 
+
+            
             if (_services.CreateUser(user)) _services.KarbareAdi(user);
 
 
