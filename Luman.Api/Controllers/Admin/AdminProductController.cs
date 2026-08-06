@@ -5,15 +5,18 @@ using Luman.DataLayer.EntityModel.Product;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.NetworkInformation;
 
 namespace Luman.Api.Controllers.Admin
 {
     [Route("api/v{version:apiVersion}/Admin")]
     [ApiController]
     [ApiVersion("2.0")]
-    
+    [Authorize]
+    [PermissionChecker(1,3)]
     public class AdminProductController : ControllerBase
     {
+        private static readonly string[] ExtensionFile = { ".jpg", ".png", ".jpeg",".gif",".webp" };
         private readonly IProductService _productService;
 
         public AdminProductController(IProductService productService)
@@ -51,7 +54,7 @@ namespace Luman.Api.Controllers.Admin
 
 
         [HttpPost("AddProduct")]
-        public IActionResult AddProduct([FromForm] CreateProductDTO model)
+        public async Task<IActionResult> AddProduct([FromForm] CreateProductDTO model)
         {
             if (!ModelState.IsValid)
             {
@@ -60,9 +63,14 @@ namespace Luman.Api.Controllers.Admin
             var categoryid = _productService.GetGroupIdByName(model.Categoryname);
 
             //ذخیره عکس 
+           
             if (model.Imagename == null || model.Imagename.Length == 0)
             {
                 return BadRequest("فایلی وارد نشده است");
+            }
+            if (!ExtensionFile.Contains(Path.GetExtension(model.Imagename.FileName).ToLower()))
+            {
+                return BadRequest("فایل وارد شده اشتباه است.");
             }
             var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot" , "uploads");
             if (!Directory.Exists(folderPath))
@@ -74,7 +82,7 @@ namespace Luman.Api.Controllers.Admin
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                model.Imagename.CopyToAsync(stream);
+               await model.Imagename.CopyToAsync(stream);
             }
 
 
@@ -109,7 +117,7 @@ namespace Luman.Api.Controllers.Admin
 
 
         [HttpPatch("EditeProduct/{proid:int}")]
-        public IActionResult EditeProduct([FromForm] EditeProduct model, int proid)
+        public async Task<IActionResult> EditeProduct([FromForm] EditeProduct model, int proid)
         {
             if (!ModelState.IsValid) return BadRequest(model);
 
@@ -117,13 +125,18 @@ namespace Luman.Api.Controllers.Admin
 
 
             var product = _productService.GetproductById(proid);
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.Imagename.FileName);
             var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
 
 
 
             if (model.Imagename != null)
             {
+                if (!ExtensionFile.Contains(Path.GetExtension(model.Imagename.FileName).ToLower()))
+                {
+                    return BadRequest("فایل وارد شده اشتباه است.");
+                }
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.Imagename.FileName);
 
                 if (!string.IsNullOrEmpty(product.imagename))
                 {
@@ -146,15 +159,15 @@ namespace Luman.Api.Controllers.Admin
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    model.Imagename.CopyToAsync(stream);
+                   await model.Imagename.CopyToAsync(stream);
                 }
+                product.imagename = fileName;
+               
 
             }
 
-            product.imagename = fileName;
             product.Name = model.Name;
             product.Price = model.Price;
-
 
             _productService.EditeProduct(product);
             return Ok();

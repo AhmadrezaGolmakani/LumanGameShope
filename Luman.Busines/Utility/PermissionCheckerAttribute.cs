@@ -2,15 +2,18 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false)]
 public class PermissionCheckerAttribute : Attribute, IAuthorizationFilter
 {
-    private readonly int _permissionId;
+    private readonly int[] _permissionIds;
 
-    // دریافت شناسه دسترسی مورد نظر از طریق Attribute
-    public PermissionCheckerAttribute(int permissionId)
+    // دریافت یک یا چند شناسه دسترسی از طریق Attribute
+    // اگه کاربر حداقل یکی از این دسترسی‌ها رو داشته باشه، اجازه عبور داده میشه
+    public PermissionCheckerAttribute(params int[] permissionIds)
     {
-        _permissionId = permissionId;
+        _permissionIds = permissionIds;
     }
 
     public void OnAuthorization(AuthorizationFilterContext context)
@@ -32,8 +35,8 @@ public class PermissionCheckerAttribute : Attribute, IAuthorizationFilter
 
         string userName = context.HttpContext.User.Identity.Name;
 
-        // بررسی دسترسی کاربر
-        bool hasPermission = permissionService.CheckPermission(_permissionId, userName);
+        // بررسی دسترسی کاربر — کافیه یکی از دسترسی‌های لیست‌شده رو داشته باشه
+        bool hasPermission = _permissionIds.Any(id => permissionService.CheckPermission(id, userName));
 
         if (!hasPermission)
         {

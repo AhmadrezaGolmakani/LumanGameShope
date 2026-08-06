@@ -5,10 +5,12 @@ using Luman.Busines.Services.UserService;
 using Luman.Busines.Utility;
 using Luman.DataLayer.EntityModel.User;
 using Luman.DataLayer.Migrations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using System.Security.Claims;
 
 namespace Luman.Api.Controllers
 {
@@ -23,7 +25,7 @@ namespace Luman.Api.Controllers
         private readonly IMapper _mapper;
         private readonly IPermissionService _permissionService;
 
-        public UserAccountController(IUserServices services,  IPermissionService permissionService, IMapper mapper)
+        public UserAccountController(IUserServices services, IPermissionService permissionService, IMapper mapper)
         {
             _services = services;
             _permissionService = permissionService;
@@ -55,19 +57,19 @@ namespace Luman.Api.Controllers
                 Name = model.Name,
                 Email = model.Email,
                 Family = model.Family,
-                Password = PasswordHelper.EncodePasswordMd5(model.Password),
+                Password = PasswordHelper.HashPassword(model.Password),
                 UserName = model.UserName,
                 CreateDate = DateTime.Now,
                 IsDelete = false,
-                 
+
             };
 
 
-            
+
             if (_services.CreateUser(user)) _services.KarbareAdi(user);
 
 
-            return Ok(user);
+            return Ok(model);
 
 
         }
@@ -81,7 +83,7 @@ namespace Luman.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(201)]
         [HttpPost("Login")]
-        public IActionResult Login([FromBody] LoginModel model)
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             if (!ModelState.IsValid) return BadRequest(model);
 
@@ -91,12 +93,18 @@ namespace Luman.Api.Controllers
 
             }
 
-            var user = _services.LoginUser(model.UserName, model.Password);
+            var user = await _services.LoginUser(model.UserName, model.Password);
             if (user == null)
             {
-                return NotFound(new { error = "کاربر یافت نشد" , ErrorCodes = 404 });
+                return NotFound(new { error = "کاربر یافت نشد", ErrorCodes = 404 });
             }
-            return Ok(new {Message = "با موفقیت وارد شدید" , UserId = user.UserId , UserName = user.UserName , JwtToken = user.JwtSecret });
+            return Ok(new
+            {
+                Message = "با موفقیت وارد شدید",
+                UserId = user.UserId,
+                UserName = user.UserName,
+                JwtToken = user.JwtSecret
+            });
         }
 
         /// <summary>
@@ -108,9 +116,14 @@ namespace Luman.Api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         [HttpPatch("Edite/{userid:int}")]
+        [Authorize]
         public IActionResult EditeUser([FromBody] EditeUserModel model, int userid)
         {
+            if (User.FindFirst(ClaimTypes.NameIdentifier).Value != userid.ToString()) 
+                return Forbid();    
+            
             if (userid != model.UserId) return NotFound(model);
 
             if (!ModelState.IsValid) return BadRequest(model);
@@ -139,8 +152,12 @@ namespace Luman.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [HttpPatch("changepassword/{userid:int}")]
+        [Authorize]
         public IActionResult ChnagePassWord([FromBody] ChangePassword model, int userid)
         {
+            if (User.FindFirst(ClaimTypes.NameIdentifier).Value != userid.ToString())
+                return Forbid();
+
             if (_services.ComparePassword(model.UserName, model.OldPassword))
             {
                 _services.ChangePassword(model.UserName, model.NewPassword);
@@ -159,8 +176,15 @@ namespace Luman.Api.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(400)]
         [HttpGet("UserPanel/{username}")]
+        [Authorize]
         public IActionResult GetInfoUser(string username)
         {
+            if (User.Identity.Name != username)
+            {
+                return Forbid();
+
+            }
+
             var user = _services.GetUserByUsername(username);
 
             if (user == null) return NotFound();
@@ -173,5 +197,10 @@ namespace Luman.Api.Controllers
         }
 
         #endregion
+        [HttpGet("TestException")]
+        public IActionResult TestException()
+        {
+            throw new Exception("test");
+        }
     }
 }

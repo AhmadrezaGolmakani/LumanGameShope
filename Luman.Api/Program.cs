@@ -7,21 +7,28 @@ using Luman.Busines.Services.UserService;
 using Luman.Busines.Utility;
 using Luman.DataLayer.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Configuration;
-using System.Net;
+
 using System.Text;
 
 using System.Text.Json.Serialization;
 
-var builder = WebApplication.CreateBuilder(args);
 
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog();
 builder.Services.AddAuthorization();
 
 
@@ -119,8 +126,7 @@ builder.Services.AddAuthentication(x =>
 #endregion
 
 #region Mapper
-builder.Services.AddAutoMapper(typeof(MapperDTO));
-
+builder.Services.AddAutoMapper(cfg => { }, typeof(MapperDTO));
 
 #endregion
 
@@ -129,30 +135,26 @@ builder.Services.AddAutoMapper(typeof(MapperDTO));
 
 
 
-
+builder.Configuration.AddUserSecrets<Program>();
 
 
 
 
 var app = builder.Build();
 
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI(x =>
-//    {
-//        var provider = app.Services.CreateScope().ServiceProvider
-//                .GetRequiredService<IApiVersionDescriptionProvider>();
+app.Map("/error", (HttpContext context) =>
+{
+    var exceptionFeature = context.Features.Get<IExceptionHandlerFeature>();
+    var exception = exceptionFeature?.Error;
 
-//        foreach (var item in provider.ApiVersionDescriptions)
-//        {
-//            x.SwaggerEndpoint($"swagger/{item.GroupName}/swagger.json", item.GroupName.ToString());
+    var logger = app.Services.CreateScope().ServiceProvider
+         .GetRequiredService<ILogger<Program>>();
 
-//        }
-//        //x.SwaggerEndpoint("/swagger/VilaOpenApi/swagger.json" , "Vila");
-//        x.RoutePrefix = "";
-//    });
-//}
+    logger.LogError(exception, "Unhandled exception occurred");
+    return Results.Problem("سرور به مشکل خورده است لطفا با مدیریت تماس بگیرید");
+});
+app.UseExceptionHandler("/error");
+
 app.UseSwagger();
 app.UseSwaggerUI(x =>
 {
@@ -164,7 +166,6 @@ app.UseSwaggerUI(x =>
         x.SwaggerEndpoint($"swagger/{item.GroupName}/swagger.json", item.GroupName.ToString());
 
     }
-    //x.SwaggerEndpoint("/swagger/VilaOpenApi/swagger.json" , "Vila");
     x.RoutePrefix = "";
 });
 app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());

@@ -3,6 +3,7 @@ using Luman.Busines.Services.OrderService;
 using Luman.Busines.Services.ProductService;
 using Luman.Busines.Utility;
 using Luman.DataLayer.EntityModel.Orders;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
@@ -12,6 +13,8 @@ namespace Luman.Api.Controllers.Admin
     [Route("api/v{version:apiVersion}/Admin")]
     [ApiController]
     [ApiVersion("2.0")]
+    [Authorize]
+    [PermissionChecker(1, 3)]
     public class DiscountController : ControllerBase
     {
         private readonly IOrderServices _orderServices;

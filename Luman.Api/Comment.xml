@@ -64,5 +64,10 @@
             <param name="username">یوزرنیم کاربر </param>
             <returns></returns>  
         </member>
+        <member name="T:Program">
+            <summary>
+            Auto-generated public partial Program class for top-level statement apps.
+            </summary>
+        </member>
     </members>
 </doc>

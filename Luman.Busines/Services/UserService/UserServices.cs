@@ -3,6 +3,7 @@ using Luman.Busines.DTOs.UserDTO;
 using Luman.Busines.Utility;
 using Luman.DataLayer.Context;
 using Luman.DataLayer.EntityModel.User;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -34,15 +35,16 @@ namespace Luman.Busines.Services.UserService
         public void ChangePassword(string username, string newPass)
         {
             var user = GetUserByUserName(username);
-            user.Password = PasswordHelper.EncodePasswordMd5(newPass);
+            user.Password = PasswordHelper.HashPassword(newPass);
             UpdateUser(user);
         }
 
         public bool ComparePassword(string oldpass, string username)
-        {
-            var hashOldpass = PasswordHelper.EncodePasswordMd5(oldpass);
-            _context.users.Any(u => u.UserName == username && u.Password == hashOldpass);
-            return true;
+        {   var user = GetUserByUserName(username);
+            if (user == null) { return false; }
+            return PasswordHelper.VerifyPassword(oldpass,user.Password);
+            
+           
         }
 
         public bool CreateUser(User user)
@@ -60,7 +62,7 @@ namespace Luman.Busines.Services.UserService
             User addUser = new()
             {
                 UserName = user.UserName,
-                Password = PasswordHelper.EncodePasswordMd5(user.Password),
+                Password = PasswordHelper.HashPassword(user.Password),
                 Email = user.Email,
                 Name = user.UserName,
                 Family = user.Family,
@@ -134,54 +136,62 @@ namespace Luman.Busines.Services.UserService
         public bool IsCorrectpass(string username, string pass)
         {
 
-            var hashPass = PasswordHelper.EncodePasswordMd5(pass.Trim());
-            _context.users.Any(u => u.UserName.Trim() == username.Trim() && u.Password == hashPass);
-            return true;
-
-
+            var hashPass = PasswordHelper.HashPassword(pass.Trim());
+            return _context.users.Any(u => u.UserName.Trim() == username.Trim() && u.Password == hashPass);
+          
         }
 
         public bool IsExsitEmail(string email)
         {
-
-            _context.users.Any(u => u.Email == email);
-            return true;
-
+            return _context.users.Any(u => u.Email == email);
         }
 
-        public bool IsExsitUserName(string username)
+        public  bool IsExsitUserName(string username)
         {
-
-
-            _context.users.Any(u => u.UserName == username);
-            return true;
-
+            return _context.users.Any(u => u.UserName == username);
         }
 
-        public User LoginUser(string username, string pass)
+        public async Task<User> LoginUser(string username, string pass)
         {
-            var hashPass = PasswordHelper.EncodePasswordMd5(pass);
-            var user = _context.users.SingleOrDefault(c => c.UserName == username && c.Password == hashPass);
+            var hashPass = PasswordHelper.HashPassword(pass);
+            var user =await _context.users.SingleOrDefaultAsync(c => c.UserName == username );
 
-            if (user == null) { return null; }
+            if (user == null)
+            {
+                // یوزرنیم اصلاً توی دیتابیس نیست
+                return null;
+            }
+
+            if (!PasswordHelper.VerifyPassword(pass, user.Password))
+            {
+                // یوزرنیم درسته ولی پسورد اشتباهه
+                return null;
+            }
+
+            // گرفتن نقش‌های کاربر برای درج در توکن
+            var roleNames = _context.userRoles
+                .Where(ur => ur.UserId == user.UserId)
+                .Select(ur => ur.role.Name)
+                .ToList();
 
             var key = Encoding.ASCII.GetBytes(_Settings.Secret);
-
             var tokenHandler = new JwtSecurityTokenHandler();
+
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name, user.UserName.ToString()),
+        new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+        new Claim(ClaimTypes.Email, user.Email.ToString())
+    };
+
+            claims.AddRange(roleNames.Select(roleName => new Claim(ClaimTypes.Role, roleName)));
 
             var tokenDescription = new SecurityTokenDescriptor()
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name , user.UserName.ToString()),
-                    new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()), // ذخیره userId در توکن
-                    new Claim(ClaimTypes.Email, user.Email.ToString()) // ذخیره userId در توکن
-
-                }),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
-                SecurityAlgorithms.HmacSha256Signature
-                ),
+                    SecurityAlgorithms.HmacSha256Signature),
                 Issuer = _Settings.Issure,
                 Audience = _Settings.Audience
             };
@@ -190,8 +200,7 @@ namespace Luman.Busines.Services.UserService
 
             user.JwtSecret = tokenHandler.WriteToken(token);
             return user;
-        }
-
+        } 
         public bool Save() =>
             _context.SaveChanges() >= 0 ? true : false;
 
@@ -231,8 +240,8 @@ namespace Luman.Busines.Services.UserService
 
         public bool IsExsitUserById(int userid)
         {
-            _context.users.Any(u=>u.UserId == userid);
-            return true;
+            return _context.users.Any(u=>u.UserId == userid);
+         
         }
     }
 }

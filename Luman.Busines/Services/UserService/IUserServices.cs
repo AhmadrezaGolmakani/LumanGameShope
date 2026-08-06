@@ -15,7 +15,7 @@ namespace Luman.Busines.Services.UserService
         InformationUserPanel GetUserInformation(string username);
 
         bool CreateUser(User user);
-        User LoginUser(string username, string pass);
+        Task<User> LoginUser(string username, string pass);
         bool IsCorrectpass(string username, string pass);
 
         bool IsExsitUserName(string username);

@@ -2,6 +2,7 @@
 using Luman.Busines.Services.OrderService;
 using Luman.Busines.Services.ProductService;
 using Luman.Busines.Services.UserService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace Luman.Api.Controllers
     [Route("api/v{version:apiVersion}/Order")]
     [ApiController]
     [ApiVersion("1.0")]
+    [Authorize]
     public class OrderController : ControllerBase
     {
         private readonly IOrderServices _orderservice;
