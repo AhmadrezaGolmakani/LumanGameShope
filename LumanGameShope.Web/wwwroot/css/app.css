@@ -1,71 +1,202 @@
-html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+```css
+/* =========================================
+   LUMAN GAME SHOP - GLOBAL THEME
+   ========================================= */
+:root {
+    color-scheme: dark;
+    --luman-bg: #0B1120;
+    --luman-surface: #151E30;
+    --luman-surface-hover: #1B2940;
+    --luman-border: #26364F;
+    --luman-primary: #3B82F6;
+    --luman-primary-light: #60A5FA;
+    --luman-cyan: #22D3EE;
+    --luman-text: #F1F5F9;
+    --luman-muted: #94A3B8;
+    --luman-gold: #FBBF24;
+    --luman-radius: 14px;
 }
 
-h1:focus {
-    outline: none;
+/* ---------- پایه ---------- */
+
+html,
+body {
+    font-family: "Vazirmatn", Tahoma, Arial, sans-serif;
+    background: var(--luman-bg);
+    color: var(--luman-text);
+    margin: 0;
+    min-height: 100%;
 }
 
-a, .btn-link {
-    color: #0071c1;
+body {
+    min-height: 100vh;
+    direction: rtl;
+    overflow-x: hidden;
 }
+
+* {
+    box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--luman-text);
+    font-weight: 800;
+}
+
+    h1:focus {
+        outline: none;
+    }
+
+a {
+    color: var(--luman-primary-light);
+    text-decoration: none;
+    transition: color .2s ease;
+}
+
+    a:hover {
+        color: var(--luman-cyan);
+    }
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+/* ---------- لینک و دکمه ---------- */
 
 .btn-primary {
     color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+    background: linear-gradient(135deg, #2563EB, #3B82F6);
+    border-color: #3B82F6;
+    border-radius: 10px;
+    transition: filter .2s ease, box-shadow .2s ease;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    .btn-primary:hover {
+        color: #fff;
+        background: linear-gradient(135deg, #3B82F6, #60A5FA);
+        border-color: #60A5FA;
+        box-shadow: 0 0 18px rgba(59, 130, 246, .2);
+    }
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 .15rem var(--luman-bg), 0 0 0 .3rem var(--luman-primary);
 }
+
+/* ---------- محتوای عمومی ---------- */
 
 .content {
     padding-top: 1.1rem;
 }
 
+#app {
+    min-height: 100vh;
+}
+
+/* ---------- فیلدهای Bootstrap ---------- */
+
+.form-control,
+.form-select,
+.form-control-plaintext {
+    color: var(--luman-text);
+    background-color: var(--luman-surface);
+    border-color: var(--luman-border);
+    border-radius: 10px;
+}
+
+    .form-control::placeholder,
+    .form-control-plaintext::placeholder {
+        color: var(--luman-muted);
+        opacity: 1;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        color: var(--luman-text);
+        background-color: var(--luman-surface);
+        border-color: var(--luman-primary);
+    }
+
+.form-check-input {
+    background-color: var(--luman-surface);
+    border-color: var(--luman-border);
+}
+
+    .form-check-input:checked {
+        background-color: var(--luman-primary);
+        border-color: var(--luman-primary);
+    }
+
+/* ---------- اعتبارسنجی ---------- */
+
 .valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
+    outline: 1px solid #22C55E;
 }
 
 .invalid {
-    outline: 1px solid red;
+    outline: 1px solid #EF4444;
 }
 
 .validation-message {
-    color: red;
+    color: #F87171;
 }
 
+/* ---------- خطای Blazor ---------- */
+
 #blazor-error-ui {
-    color-scheme: light only;
-    background: lightyellow;
-    bottom: 0;
-    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    background: #7F1D1D;
+    border-top: 1px solid #EF4444;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, .25);
     box-sizing: border-box;
     display: none;
-    left: 0;
-    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
     position: fixed;
+    bottom: 0;
+    left: 0;
     width: 100%;
-    z-index: 1000;
+    padding: .85rem 1.25rem;
+    z-index: 10000;
 }
+
+    #blazor-error-ui .reload {
+        color: #FDE68A;
+        font-weight: 700;
+        margin-right: 8px;
+    }
 
     #blazor-error-ui .dismiss {
         cursor: pointer;
         position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
+        left: .75rem;
+        top: .5rem;
     }
 
+/* ---------- خطای کامپوننت ---------- */
+
 .blazor-error-boundary {
-    background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNDkiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIG92ZXJmbG93PSJoaWRkZW4iPjxkZWZzPjxjbGlwUGF0aCBpZD0iY2xpcDAiPjxyZWN0IHg9IjIzNSIgeT0iNTEiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0OSIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNjbGlwMCkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMzUgLTUxKSI+PHBhdGggZD0iTTI2My41MDYgNTFDMjY0LjcxNyA1MSAyNjUuODEzIDUxLjQ4MzcgMjY2LjYwNiA1Mi4yNjU4TDI2Ny4wNTIgNTIuNzk4NyAyNjcuNTM5IDUzLjYyODMgMjkwLjE4NSA5Mi4xODMxIDI5MC41NDUgOTIuNzk1IDI5MC42NTYgOTIuOTk2QzI5MC44NzcgOTMuNTEzIDI5MSA5NC4wODE1IDI5MSA5NC42NzgyIDI5MSA5Ny4wNjUxIDI4OS4wMzggOTkgMjg2LjYxNyA5OUwyNDAuMzgzIDk5QzIzNy45NjMgOTkgMjM2IDk3LjA2NTEgMjM2IDk0LjY3ODIgMjM2IDk0LjM3OTkgMjM2LjAzMSA5NC4wODg2IDIzNi4wODkgOTMuODA3MkwyMzYuMzM4IDkzLjAxNjIgMjM2Ljg1OCA5Mi4xMzE0IDI1OS40NzMgNTMuNjI5NCAyNTkuOTYxIDUyLjc5ODUgMjYwLjQwNyA1Mi4yNjU4QzI2MS4yIDUxLjQ4MzcgMjYyLjI5NiA1MSAyNjMuNTA2IDUxWk0yNjMuNTg2IDY2LjAxODNDMjYwLjczNyA2Ni4wMTgzIDI1OS4zMTMgNjcuMTI0NSAyNTkuMzEzIDY5LjMzNyAyNTkuMzEzIDY5LjYxMDIgMjU5LjMzMiA2OS44NjA4IDI1OS4zNzEgNzAuMDg4N0wyNjEuNzk1IDg0LjAxNjEgMjY1LjM4IDg0LjAxNjEgMjY3LjgyMSA2OS43NDc1QzI2Ny44NiA2OS43MzA5IDI2Ny44NzkgNjkuNTg3NyAyNjcuODc5IDY5LjMxNzkgMjY3Ljg3OSA2Ny4xMTgyIDI2Ni40NDggNjYuMDE4MyAyNjMuNTg2IDY2LjAxODNaTTI2My41NzYgODYuMDU0N0MyNjEuMDQ5IDg2LjA1NDcgMjU5Ljc4NiA4Ny4zMDA1IDI1OS43ODYgODkuNzkyMSAyNTkuNzg2IDkyLjI4MzcgMjYxLjA0OSA5My41Mjk1IDI2My41NzYgOTMuNTI5NSAyNjYuMTE2IDkzLjUyOTUgMjY3LjM4NyA5Mi4yODM3IDI2Ny4zODcgODkuNzkyMSAyNjcuMzg3IDg3LjMwMDUgMjY2LjExNiA4Ni4wNTQ3IDI2My41NzYgODYuMDU0N1oiIGZpbGw9IiNGRkU1MDAiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48L3N2Zz4=) no-repeat 1rem/1.8rem, #b32121;
+    background: #7F1D1D;
+    border: 1px solid #EF4444;
+    border-radius: 12px;
     padding: 1rem 1rem 1rem 3.7rem;
     color: white;
 }
 
     .blazor-error-boundary::after {
-        content: "An error has occurred."
+        content: "خطایی رخ داده است.";
     }
+
+/* ---------- صفحه بارگذاری ---------- */
 
 .loading-progress {
     position: absolute;
@@ -73,43 +204,433 @@ a, .btn-link {
     width: 8rem;
     height: 8rem;
     inset: 20vh 0 auto 0;
-    margin: 0 auto 0 auto;
+    margin: 0 auto;
 }
 
     .loading-progress circle {
         fill: none;
-        stroke: #e0e0e0;
-        stroke-width: 0.6rem;
+        stroke: #26364F;
+        stroke-width: .6rem;
         transform-origin: 50% 50%;
         transform: rotate(-90deg);
     }
 
         .loading-progress circle:last-child {
-            stroke: #1b6ec2;
-            stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
-            transition: stroke-dasharray 0.05s ease-in-out;
+            stroke: var(--luman-primary);
+            stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * .8), 500%;
+            transition: stroke-dasharray .05s ease-in-out;
+            filter: drop-shadow(0 0 5px rgba(59, 130, 246, .45));
         }
 
 .loading-progress-text {
     position: absolute;
     text-align: center;
-    font-weight: bold;
-    inset: calc(20vh + 3.25rem) 0 auto 0.2rem;
+    font-weight: 700;
+    color: var(--luman-primary-light);
+    inset: calc(20vh + 3.25rem) 0 auto .2rem;
 }
 
-    .loading-progress-text:after {
-        content: var(--blazor-load-percentage-text, "Loading");
+    .loading-progress-text::after {
+        content: var(--blazor-load-percentage-text, "در حال بارگذاری");
     }
 
+/* ---------- کد ---------- */
+
 code {
-    color: #c02d76;
+    color: #F472B6;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-    color: var(--bs-secondary-color);
-    text-align: end;
+/* ---------- اسکرول‌بار ---------- */
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #334967 var(--luman-bg);
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-    text-align: start;
+::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--luman-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #334967;
+    border-radius: 10px;
+    border: 2px solid var(--luman-bg);
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--luman-primary);
+    }
+
+/* ---------- انتخاب متن ---------- */
+
+::selection {
+    color: #fff;
+    background: #2563EB;
+}
+
+/* ---------- لینک‌های منو ---------- */
+
+.nav-link {
+    color: var(--luman-muted);
+    transition: color .2s ease, background .2s ease;
+}
+
+    .nav-link:hover,
+    .nav-link.active {
+        color: var(--luman-primary-light);
+    }
+
+/* ---------- واکنش‌گرایی ---------- */
+
+@media (max-width: 600px) {
+    .content {
+        padding-top: .75rem;
+    }
+
+    .loading-progress {
+        width: 6rem;
+        height: 6rem;
+    }
+}
+
+
+/* Luman initial loading screen */
+#luman-initial-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0B1120;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+    #luman-initial-loader.luman-loader-hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+.luman-loader-content {
+    width: min(340px, 85vw);
+    text-align: center;
+    color: #F1F5F9;
+}
+
+.luman-loader-logo {
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: 7px;
+    color: #60A5FA;
+    text-shadow: 0 0 30px rgb(59 130 246 / 35%);
+}
+
+.luman-loader-subtitle {
+    margin-top: 2px;
+    font-size: 12px;
+    letter-spacing: 6px;
+    color: #94A3B8;
+}
+
+.luman-loader-spinner {
+    width: 46px;
+    height: 46px;
+    margin: 36px auto 24px;
+    border: 3px solid #26364F;
+    border-top-color: #3B82F6;
+    border-right-color: #22D3EE;
+    border-radius: 50%;
+    animation: luman-spin 0.8s linear infinite;
+}
+
+#luman-loader-message {
+    font-size: 14px;
+    color: #CBD5E1;
+}
+
+.luman-loader-progress {
+    height: 4px;
+    margin-top: 22px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #26364F;
+}
+
+.luman-loader-progress-bar {
+    width: 35%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #3B82F6, #22D3EE);
+    animation: luman-progress 1.5s ease-in-out infinite;
+}
+
+.luman-loader-caption {
+    margin-top: 24px;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: #64748B;
+}
+
+@keyframes luman-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes luman-progress {
+    0% {
+        transform: translateX(-110%);
+    }
+
+    100% {
+        transform: translateX(310%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .luman-loader-spinner,
+    .luman-loader-progress-bar {
+        animation-duration: 3s;
+    }
+}
+
+
+/* ==============================
+   LUMAN PREMIUM SEARCH
+   ============================== */
+
+.luman-search-wrapper {
+    width: 100%;
+    max-width: 440px;
+}
+
+.luman-search-heading {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 5px 14px;
+    gap: 12px;
+    background: linear-gradient(135deg, rgb(21 30 48 / 96%), rgb(13 23 41 / 98%));
+    border: 1px solid #293950;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 12%), inset 0 1px 0 rgb(255 255 255 / 3%);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.25s ease;
+}
+
+    .luman-search-heading:hover {
+        border-color: #3B82F6;
+        background: #151F32;
+    }
+
+    .luman-search-heading:focus-within {
+        border-color: #3B82F6;
+        box-shadow: 0 0 0 3px rgb(59 130 246 / 12%), 0 10px 30px rgb(0 0 0 / 18%), 0 0 22px rgb(59 130 246 / 8%);
+        transform: translateY(-1px);
+    }
+
+.luman-search-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    color: #60A5FA;
+    background: rgb(59 130 246 / 12%);
+    border: 1px solid rgb(96 165 250 / 12%);
+    border-radius: 12px;
+    transition: all 0.25s ease;
+}
+
+.luman-search-heading:focus-within .luman-search-icon {
+    color: #22D3EE;
+    background: rgb(34 211 238 / 10%);
+    border-color: rgb(34 211 238 / 25%);
+    box-shadow: 0 0 16px rgb(34 211 238 / 8%);
+}
+
+.luman-search {
+    flex: 1;
+    min-width: 0;
+}
+
+    .luman-search .mud-input-control {
+        margin: 0 !important;
+    }
+
+    .luman-search .mud-input-root {
+        color: #F1F5F9 !important;
+        background: transparent !important;
+    }
+
+    .luman-search .mud-input-outlined-border {
+        border: none !important;
+    }
+
+    .luman-search .mud-input-slot,
+    .luman-search input {
+        color: #F1F5F9 !important;
+        font-size: 13px !important;
+        font-weight: 400;
+    }
+
+    .luman-search input {
+        padding-top: 13px !important;
+        padding-bottom: 13px !important;
+    }
+
+        .luman-search input::placeholder {
+            color: #8494AD !important;
+            opacity: 1 !important;
+        }
+
+    .luman-search .mud-input-adornment {
+        color: #94A3B8;
+    }
+
+    .luman-search .mud-icon-button {
+        color: #94A3B8;
+        transition: color 0.2s ease, background 0.2s ease;
+    }
+
+        .luman-search .mud-icon-button:hover {
+            color: #F1F5F9;
+            background: rgb(255 255 255 / 6%);
+        }
+
+.luman-search-shortcut {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    color: #64748B;
+    background: rgb(255 255 255 / 3%);
+    border: 1px solid #293950;
+    border-radius: 8px;
+    font-size: 17px;
+    transition: all 0.2s ease;
+}
+
+.luman-search-heading:focus-within .luman-search-shortcut {
+    color: #60A5FA;
+    border-color: rgb(59 130 246 / 35%);
+}
+
+@media (max-width: 600px) {
+    .luman-search-wrapper {
+        max-width: 100%;
+    }
+
+    .luman-search-heading {
+        border-radius: 14px;
+        padding: 4px 10px;
+        gap: 9px;
+    }
+
+    .luman-search-icon {
+        width: 34px;
+        height: 34px;
+    }
+
+    .luman-search-shortcut {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .luman-search-heading,
+    .luman-search-icon,
+    .luman-search-shortcut {
+        transition: none;
+    }
+}
+
+/* Luman account actions */
+
+.luman-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.luman-account-section {
+    display: flex;
+    align-items: center;
+}
+
+.luman-login-button {
+    min-height: 40px;
+    padding: 0 18px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #3B82F6, #2563EB);
+    box-shadow: 0 4px 14px rgb(37 99 235 / 22%);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .luman-login-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 7px 20px rgb(37 99 235 / 32%);
+    }
+
+.luman-account-button {
+    min-height: 42px;
+    padding: 4px 10px;
+    gap: 8px;
+    color: #F1F5F9;
+    border: 1px solid #30415C;
+    border-radius: 12px;
+    background: #151E30;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+    .luman-account-button:hover {
+        border-color: #3B82F6;
+        background: #1B2940;
+    }
+
+.luman-account-name {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.luman-topbar-icon {
+    color: #60A5FA;
+}
+
+@media (max-width: 600px) {
+    .luman-trust-text,
+    .luman-topbar-icon {
+        display: none;
+    }
+
+    .luman-topbar-actions {
+        gap: 8px;
+    }
+
+    .luman-login-button {
+        min-height: 36px;
+        padding: 0 10px;
+        font-size: 12px;
+    }
+
+    .luman-account-name {
+        max-width: 75px;
+    }
 }

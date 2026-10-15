@@ -95,8 +95,19 @@ namespace Luman.Api.Controllers
             }
         }
 
+        [HttpGet("Categoreis")]
+        public IActionResult GetCategoriesForIndex()
+        {
+            var categories = _productService.GetAllCategories();
+            return Ok(categories);
+        }
 
 
-       
+        [HttpPost("CategoryNames")]
+        public async Task<IActionResult> GetCategoryNames([FromBody] List<int> productIds)
+        {
+            var result = await _productService.GetCategoryNamesAsync(productIds);
+            return Ok(result);
+        }
     }
 }

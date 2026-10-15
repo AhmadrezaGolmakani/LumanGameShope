@@ -57,7 +57,10 @@ namespace Luman.Busines.Services.ProductService
         List<ProductForIndex> GetAllForIndex();
 
 
+        int GetCategoryID(int proId);
 
+        string GetCategoryName(int CatID);
+        Task<Dictionary<int, string>> GetCategoryNamesAsync(List<int> productIds);
 
         #endregion
 

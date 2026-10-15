@@ -1,25 +1,139 @@
 ﻿@inherits LayoutComponentBase
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
 
-    <main>
-        @* Required *@
-        <MudThemeProvider />
-        <MudPopoverProvider />
+<MudThemeProvider />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
-        @* Needed for dialogs *@
-        <MudDialogProvider />
+<div class="page luman-layout">
 
-        @* Needed for snackbars *@
-        <MudSnackbarProvider />
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+    <aside class="sidebar">
+        <div class="luman-brand">
+            <div class="luman-brand-icon">
+                <MudIcon Icon="@Icons.Material.Filled.SportsEsports"
+                         Size="Size.Large" />
+            </div>
+
+            <div class="luman-brand-text">
+                <span class="luman-brand-name">
+                    LUMAN
+                </span>
+                <span class="luman-brand-subtitle">
+                    GAME SHOP
+                </span>
+            </div>
         </div>
 
-        <article class="content px-4">
+        <div class="luman-sidebar-content">
+            <NavMenu />
+        </div>
+
+        <div class="luman-sidebar-footer">
+            <MudIcon Icon="@Icons.Material.Outlined.Bolt"
+                     Size="Size.Small" />
+            <span>LEVEL UP YOUR GAME</span>
+        </div>
+    </aside>
+
+    <main class="luman-main">
+
+
+        <header class="top-row luman-topbar">
+            <div class="luman-topbar-title">
+                <span class="luman-status-dot"></span>
+                <span>فروشگاه آنلاین گیمینگ</span>
+            </div>
+
+            <div class="luman-topbar-actions">
+                <MudIcon Icon="@Icons.Material.Outlined.VerifiedUser"
+                         Size="Size.Small"
+                         Class="luman-topbar-icon" />
+
+                <span class="luman-trust-text">خرید آسان و سریع</span>
+
+                <div class="luman-account-section">
+                    @if (!IsLoggedIn)
+                    {
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Login"
+                                   Class="luman-login-button"
+                                   Href="/login">
+                            ورود / ثبت‌نام
+                        </MudButton>
+                    }
+                    else
+                    {
+                        <MudMenu AnchorOrigin="Origin.BottomRight"
+                                 TransformOrigin="Origin.TopRight"
+                                 Class="luman-account-menu">
+
+                            <ActivatorContent>
+                                <MudButton Variant="Variant.Outlined"
+                                           Class="luman-account-button">
+                                    <MudAvatar Size="Size.Small"
+                                               Color="Color.Primary"
+                                               Variant="Variant.Filled">
+                                        <MudIcon Icon="@Icons.Material.Filled.Person"
+                                                 Size="Size.Small" />
+                                    </MudAvatar>
+
+                                    <span class="luman-account-name">@UserName</span>
+
+                                    <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowDown"
+                                             Size="Size.Small" />
+                                </MudButton>
+                            </ActivatorContent>
+
+                            <ChildContent>
+                                <MudMenuItem Href="/account"
+                                             Icon="@Icons.Material.Filled.Person">
+                                    حساب کاربری
+                                </MudMenuItem>
+
+                                <MudMenuItem Href="/orders"
+                                             Icon="@Icons.Material.Filled.ReceiptLong">
+                                    سفارش‌های من
+                                </MudMenuItem>
+
+                                <MudDivider />
+
+                                <MudMenuItem Icon="@Icons.Material.Filled.Logout"
+                                             OnClick="LogoutAsync">
+                                    خروج از حساب
+                                </MudMenuItem>
+                            </ChildContent>
+                        </MudMenu>
+                    }
+                </div>
+            </div>
+        </header>
+
+        <section class="content luman-content">
             @Body
-        </article>
+        </section>
+
+        <footer class="luman-footer">
+            <span>© @DateTime.Now.Year Luman Game Shop</span>
+            <span>ساخته‌شده برای گیمرها 🎮</span>
+        </footer>
+
     </main>
+
 </div>
+
+@code {
+    private bool IsLoggedIn = false;
+    private string UserName = "کاربر";
+
+    private async Task LogoutAsync()
+    {
+        // در این قسمت باید توکن یا نشست کاربر
+        // از طریق سرویس احراز هویت پروژه پاک شود.
+
+        IsLoggedIn = false;
+        UserName = "کاربر";
+
+        await Task.CompletedTask;
+    }
+}

@@ -155,6 +155,27 @@ namespace Luman.Busines.Services.ProductService
             return _context.SaveChanges() >= 0 ? true : false;
         }
 
+        public int GetCategoryID(int proId)
+        {
+            return _context.categoryProducts.SingleOrDefault(c => c.ProductId == proId).CategoryId;
 
+        }
+
+        public string GetCategoryName(int CatID)
+        {
+            return _context.categories.SingleOrDefault(c=>c.CategoryId == CatID).Name;
+        }
+
+
+
+        public async Task<Dictionary<int, string>> GetCategoryNamesAsync(List<int> productIds)
+        {
+            return await (from cp in _context.categoryProducts
+                          join c in _context.categories on cp.CategoryId equals c.CategoryId
+                          where productIds.Contains(cp.ProductId)
+                          select new { cp.ProductId, c.Name })
+                         .GroupBy(x => x.ProductId)
+                         .ToDictionaryAsync(g => g.Key, g => g.First().Name);
+        }
     }
 }

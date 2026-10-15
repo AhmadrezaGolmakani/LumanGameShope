@@ -154,7 +154,7 @@ app.Map("/error", (HttpContext context) =>
     return Results.Problem("سرور به مشکل خورده است لطفا با مدیریت تماس بگیرید");
 });
 app.UseExceptionHandler("/error");
-
+app.UseStaticFiles();
 app.UseSwagger();
 app.UseSwaggerUI(x =>
 {

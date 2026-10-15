@@ -1,101 +1,211 @@
 ﻿@page "/"
 
+@using LumanGameShope.Web.DTOs.Categories
 @using LumanGameShope.Web.DTOs.Product
+@inject HttpClient Http
+@inject IJSRuntime JS
 
-<PageTitle>محصولات — Luman Game Shop</PageTitle>
 
-<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="px-4 py-6">
+<PageTitle>محصولات | Luman Game Shop</PageTitle>
 
-    @* ---------- سربرگ صفحه ---------- *@
-    <MudStack Row="false" Spacing="1" Class="mb-6">
-        <MudText Typo="Typo.overline" Style="color:var(--luman-gold); letter-spacing:.06em;">
-            فروشگاه
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="luman-shop px-4 py-6">
+
+    @* سربرگ فروشگاه *@
+    <MudStack Spacing="1" Class="luman-header mb-7">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+            <MudIcon Icon="@Icons.Material.Filled.SportsEsports"
+                     Size="Size.Medium"
+                     Class="luman-header-icon" />
+
+            <MudText Typo="Typo.overline" Class="luman-eyebrow">
+                LUMAN GAME SHOP
+            </MudText>
+        </MudStack>
+
+        <MudText Typo="Typo.h3" Class="luman-heading">
+            دنیای بازی، <span class="luman-highlight">اینجاست!</span>
         </MudText>
-        <MudText Typo="Typo.h4" Style="font-weight:800;">همه محصولات</MudText>
-        <MudText Typo="Typo.body2" Style="color:var(--mud-palette-text-secondary);">
-            کد بازی، اشتراک و لوازم جانبی — با تحویل آنی
+
+        <MudText Typo="Typo.body1" Class="luman-subtitle">
+            بازی مورد علاقه‌ات رو پیدا کن و وارد دنیای جدیدی شو.
         </MudText>
     </MudStack>
 
-    @* ---------- نوار جستجو و فیلتر دسته‌بندی ---------- *@
-    <MudStack Row="true" Spacing="3" Class="mb-4" Style="flex-wrap:wrap;">
-        <MudTextField T="string" @bind-Value="_searchTerm"
-                      Placeholder="جستجوی بازی، کنسول، لوازم جانبی…"
-                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
-                      Variant="Variant.Outlined" Margin="Margin.Dense"
-                      Style="max-width:340px;" />
+    @* جستجو و دسته‌بندی *@
+    <MudPaper Class="luman-toolbar pa-3 mb-6" Elevation="0">
+        <MudStack Row="true"
+                  AlignItems="AlignItems.Center"
+                  Spacing="3"
+                  Class="luman-toolbar-content">
 
-        <MudSpacer />
+            
+           
+            <div class="luman-search-wrapper">
+                <div class="luman-search-heading">
+                    <span class="luman-search-icon">
+                        <MudIcon Icon="@Icons.Material.Filled.Search" Size="Size.Medium" />
+                    </span>
 
-        <MudChipSet T="string" SelectedValuesChanged="OnCategoryChanged" SelectedValues="new[] { _activeCategory }"
-                    Filter="true" Mandatory="true">
-            @foreach (var cat in _categories)
-            {
-                <MudChip Text="@cat" Value="@cat" Color="Color.Warning" Variant="Variant.Outlined" />
-            }
-        </MudChipSet>
-    </MudStack>
+                    <MudTextField T="string"
+                                  @bind-Value="_searchTerm"
+                                  Placeholder="دنبال چه چیزی می‌گردی؟"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  Immediate="true"
+                                  Clearable="true"
+                                  Class="luman-search" />
 
-    @* ---------- حالت بارگذاری ---------- *@
+                    <span class="luman-search-shortcut">⌕</span>
+                </div>
+            </div>
+
+
+
+            <MudSpacer />
+
+            <MudChipSet T="string"
+                        SelectedValues="@(_activeCategory is null
+                            ? new HashSet<string>()
+                            : new HashSet<string> { _activeCategory })"
+                        SelectedValuesChanged="OnCategoryChanged"
+                        Filter="true"
+                        Mandatory="true"
+                        Class="luman-categories">
+
+                @foreach (var cat in _categories)
+                {
+                    <MudChip T="string"
+                             Text="@cat"
+                             Value="@cat"
+                             Color="Color.Primary"
+                             Variant="Variant.Outlined" />
+                }
+
+            </MudChipSet>
+        </MudStack>
+    </MudPaper>
+
+    @* وضعیت بارگذاری *@
     @if (_isLoading)
     {
         <MudGrid Spacing="4">
             @for (int i = 0; i < 8; i++)
             {
-                <MudItem xs="6" sm="4" md="3">
-                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="320px" Style="border-radius:12px;" />
+                <MudItem xs="6" sm="4" md="3" @key="i">
+                    <MudPaper Class="luman-skeleton-card pa-3" Elevation="0">
+                        <MudSkeleton SkeletonType="SkeletonType.Rectangle"
+                                     Height="180px" />
+                        <MudSkeleton Width="80%" Height="25px" Class="mt-3" />
+                        <MudSkeleton Width="50%" Height="20px" />
+                        <MudSkeleton Width="100%" Height="38px" Class="mt-3" />
+                    </MudPaper>
                 </MudItem>
             }
         </MudGrid>
     }
-    @* ---------- حالت خالی ---------- *@
+    @* محصولی پیدا نشد *@
     else if (!_filteredProducts.Any())
     {
-        <MudPaper Class="pa-8 d-flex flex-column align-center" Elevation="0"
-                  Style="border:1px dashed var(--mud-palette-lines-default); border-radius:12px;">
-            <MudIcon Icon="@Icons.Material.Outlined.SearchOff" Size="Size.Large" Style="color:var(--mud-palette-text-disabled);" />
-            <MudText Typo="Typo.body1" Class="mt-2">محصولی با این مشخصات پیدا نشد</MudText>
-            <MudText Typo="Typo.body2" Style="color:var(--mud-palette-text-secondary);">
-                عبارت جستجو یا دسته‌بندی را تغییر دهید
+        <MudPaper Class="luman-empty pa-8" Elevation="0">
+            <MudIcon Icon="@Icons.Material.Outlined.SearchOff"
+                     Size="Size.Large"
+                     Class="luman-empty-icon" />
+
+            <MudText Typo="Typo.h6" Class="mt-3">
+                محصولی پیدا نشد!
+            </MudText>
+
+            <MudText Typo="Typo.body2" Class="luman-subtitle">
+                عبارت جستجو یا دسته‌بندی را تغییر بده.
             </MudText>
         </MudPaper>
     }
-    @* ---------- گرید محصولات ---------- *@
+    @* فهرست محصولات *@
     else
     {
+        <MudStack Row="true"
+                  AlignItems="AlignItems.Center"
+                  Class="mb-4">
+
+            <MudText Typo="Typo.h6" Class="luman-section-title">
+                محصولات فروشگاه
+            </MudText>
+
+            <MudSpacer />
+
+            <MudText Typo="Typo.caption" Class="luman-count">
+                @_filteredProducts.Count() محصول
+            </MudText>
+        </MudStack>
+
         <MudGrid Spacing="4">
             @foreach (var product in _filteredProducts)
             {
-                <MudItem xs="6" sm="4" md="3">
+                <MudItem xs="6" sm="4" md="3" @key="product.ProductId">
+
                     <MudCard Class="luman-product-card" Elevation="0">
-                        <div class="luman-card-tag luman-tag-@GetTagColor(product.ProductId)"></div>
 
-                        <MudCardMedia Height="160" Image="@GetImageUrl(product)" Class="luman-card-media">
-                            @if (string.IsNullOrEmpty(product.Imagename))
-                            {
-                                <div class="luman-media-fallback">
-                                    <MudIcon Icon="@Icons.Material.Outlined.SportsEsports" Size="Size.Large" />
-                                </div>
-                            }
-                        </MudCardMedia>
+                        <div class="luman-image-wrapper">
 
-                        <MudCardContent Class="pb-1">
-                            <MudText Typo="Typo.caption" Style="color:var(--luman-teal); font-weight:600;">
-                                @GetCategoryLabel(product.ProductId)
+                            <MudCardMedia Height="180"
+                                          Image="@GetImageUrl(product)"
+                                          Class="luman-card-media" />
+
+                            <div class="luman-image-overlay"></div>
+
+                            <div class="luman-card-tag luman-tag-@GetTagColor(product.ProductId)">
+                            </div>
+
+                            <div class="luman-image-icon">
+                                <MudIcon Icon="@Icons.Material.Filled.SportsEsports"
+                                         Size="Size.Small" />
+                            </div>
+
+                        </div>
+
+                        <MudCardContent Class="luman-card-content">
+
+                            <MudText Typo="Typo.caption" Class="luman-category">
+                                @(_categoryNames.TryGetValue(product.ProductId, out var cat)
+                                    ? cat
+                                    : "محصول گیمینگ")
                             </MudText>
-                            <MudText Typo="Typo.subtitle2" Class="mt-1" Style="font-weight:600; min-height:2.6em;">
+
+                            <MudText Typo="Typo.subtitle1"
+                                     Class="luman-product-name">
                                 @product.Name
                             </MudText>
+
+                            <MudDivider Class="luman-divider my-3" />
+
+                            <MudStack Row="true"
+                                      AlignItems="AlignItems.Center"
+                                      Justify="Justify.SpaceBetween"
+                                      Spacing="1">
+
+                                <MudText Typo="Typo.caption" Class="luman-price-label">
+                                    قیمت محصول
+                                </MudText>
+
+                                <MudText Class="luman-price">
+                                    @FormatPrice(product.Price)
+                                </MudText>
+
+                            </MudStack>
+
                         </MudCardContent>
 
-                        <MudCardActions Class="d-flex justify-space-between align-center px-4 pb-4 pt-0">
-                            <MudText Class="luman-price">@FormatPrice(product.Price)</MudText>
-                            <MudButton Variant="Variant.Filled" Size="Size.Small"
-                                       Style="background:var(--luman-gold); color:#3d2a0e; font-weight:600;"
-                                       OnClick="() => AddToCart(product)">
-                                افزودن
+                        <MudCardActions Class="luman-card-actions">
+                            <MudButton FullWidth="true"
+                                       Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.AddShoppingCart"
+                                       Class="luman-add-button"
+                                       OnClick="@(() => AddToCart(product))">
+                                افزودن به سبد خرید
                             </MudButton>
                         </MudCardActions>
+
                     </MudCard>
                 </MudItem>
             }
@@ -106,24 +216,127 @@
 
 <style>
     :root {
-        --luman-gold: #e7a33e;
-        --luman-teal: #46c2b4;
-        --luman-coral: #e2564a;
+        --luman-bg: #0B1120;
+        --luman-surface: #151E30;
+        --luman-surface-hover: #1B2940;
+        --luman-border: #26364F;
+        --luman-blue: #3B82F6;
+        --luman-blue-light: #60A5FA;
+        --luman-cyan: #22D3EE;
+        --luman-text: #F1F5F9;
+        --luman-muted: #94A3B8;
+        --luman-gold: #FBBF24;
+    }
+
+    .luman-shop {
+        direction: rtl;
+        min-height: 100vh;
+        color: var(--luman-text);
+        background: radial-gradient(ellipse at 90% 0%, rgba(59, 130, 246, .12), transparent 35%), radial-gradient(ellipse at 5% 30%, rgba(34, 211, 238, .05), transparent 30%), var(--luman-bg);
+        border-radius: 18px;
+    }
+
+    .luman-header {
+        position: relative;
+        padding: 12px 0 8px;
+    }
+
+    .luman-header-icon {
+        color: var(--luman-cyan);
+    }
+
+    .luman-eyebrow {
+        color: var(--luman-cyan);
+        font-weight: 800;
+        letter-spacing: 2px;
+    }
+
+    .luman-heading {
+        color: var(--luman-text);
+        font-weight: 900;
+        line-height: 1.6;
+    }
+
+    .luman-highlight {
+        color: var(--luman-blue-light);
+        text-shadow: 0 0 22px rgba(59, 130, 246, .25);
+    }
+
+    .luman-subtitle {
+        color: var(--luman-muted);
+        line-height: 1.9;
+    }
+
+    .luman-toolbar {
+        background: rgba(21, 30, 48, .85);
+        border: 1px solid var(--luman-border);
+        border-radius: 16px;
+        backdrop-filter: blur(12px);
+    }
+
+    .luman-toolbar-content {
+        flex-wrap: wrap;
+    }
+
+    .luman-search {
+        flex: 1 1 260px;
+        max-width: 400px;
+    }
+
+        .luman-search .mud-input-control {
+            margin-top: 0;
+        }
+
+        .luman-search .mud-input-outlined-border {
+            border-color: var(--luman-border);
+        }
+
+    .luman-categories {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
     }
 
     .luman-product-card {
-        position: relative;
-        background: var(--mud-palette-surface);
-        border: 1px solid var(--mud-palette-lines-default);
-        border-radius: 12px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient( 160deg, #182338 0%, #111A2B 100% );
+        border: 1px solid var(--luman-border);
+        border-radius: 16px;
         overflow: hidden;
-        transition: border-color .15s ease, transform .15s ease;
+        transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
     }
 
         .luman-product-card:hover {
-            border-color: var(--luman-gold);
-            transform: translateY(-2px);
+            transform: translateY(-6px);
+            border-color: var(--luman-blue);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, .24), 0 0 20px rgba(59, 130, 246, .12);
         }
+
+    .luman-image-wrapper {
+        position: relative;
+        overflow: hidden;
+        background: #0F172A;
+    }
+
+    .luman-card-media {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        transition: transform .4s ease;
+    }
+
+    .luman-product-card:hover .luman-card-media {
+        transform: scale(1.06);
+    }
+
+    .luman-image-overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient( 180deg, rgba(11, 17, 32, .12), transparent 45%, rgba(11, 17, 32, .30) );
+    }
 
     .luman-card-tag {
         position: absolute;
@@ -133,7 +346,7 @@
         height: 0;
         z-index: 2;
         border-style: solid;
-        border-width: 20px 20px 0 0;
+        border-width: 22px 22px 0 0;
     }
 
     .luman-tag-gold {
@@ -141,55 +354,226 @@
     }
 
     .luman-tag-teal {
-        border-color: var(--luman-teal) transparent transparent transparent;
+        border-color: var(--luman-cyan) transparent transparent transparent;
     }
 
     .luman-tag-coral {
-        border-color: var(--luman-coral) transparent transparent transparent;
+        border-color: #FB7185 transparent transparent transparent;
     }
 
-    .luman-card-media {
-        background: var(--mud-palette-background-grey);
-    }
-
-    .luman-media-fallback {
-        width: 100%;
-        height: 100%;
+    .luman-image-icon {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--mud-palette-text-disabled);
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        color: var(--luman-cyan);
+        background: rgba(11, 17, 32, .8);
+        border: 1px solid rgba(34, 211, 238, .3);
+    }
+
+    .luman-card-content {
+        flex: 1;
+        padding: 14px 14px 8px;
+    }
+
+    .luman-category {
+        display: block;
+        color: var(--luman-cyan);
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .luman-product-name {
+        color: var(--luman-text);
+        font-weight: 750;
+        line-height: 1.8;
+        min-height: 3.6em;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+    }
+
+    .luman-divider {
+        border-color: var(--luman-border);
+        opacity: .8;
+    }
+
+    .luman-price-label {
+        color: var(--luman-muted);
     }
 
     .luman-price {
-        font-family: 'JetBrains Mono', monospace;
-        font-weight: 700;
+        color: var(--luman-blue-light);
+        font-weight: 900;
         font-size: .95rem;
+        white-space: nowrap;
+    }
+
+    .luman-card-actions {
+        padding: 8px 14px 14px;
+    }
+
+    .luman-add-button {
+        min-height: 42px;
+        border-radius: 10px;
+        background: linear-gradient( 135deg, #2563EB, #3B82F6 );
+        color: white;
+        font-weight: 750;
+        transition: box-shadow .2s ease, filter .2s ease;
+    }
+
+        .luman-add-button:hover {
+            filter: brightness(1.12);
+            box-shadow: 0 0 18px rgba(59, 130, 246, .25);
+        }
+
+    .luman-section-title {
+        color: var(--luman-text);
+        font-weight: 800;
+    }
+
+    .luman-count {
+        color: var(--luman-muted);
+    }
+
+    .luman-skeleton-card {
+        background: var(--luman-surface);
+        border: 1px solid var(--luman-border);
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .luman-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        background: var(--luman-surface);
+        border: 1px dashed var(--luman-border);
+        border-radius: 16px;
+    }
+
+    .luman-empty-icon {
+        color: var(--luman-blue-light);
+    }
+
+    @@media (max-width: 600px) {
+        .luman-heading {
+            font-size: 1.8rem;
+        }
+
+        .luman-shop {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+
+        .luman-card-media {
+            height: 135px;
+        }
+
+        .luman-card-content {
+            padding: 10px 10px 6px;
+        }
+
+        .luman-product-name {
+            font-size: .9rem;
+        }
+
+        .luman-price {
+            font-size: .8rem;
+        }
+
+        .luman-card-actions {
+            padding: 6px 10px 10px;
+        }
+
+        .luman-add-button {
+            font-size: .75rem;
+            padding: 0 6px;
+        }
+
+        .luman-toolbar-content {
+            align-items: stretch;
+        }
+
+        .luman-search {
+            max-width: 100%;
+        }
     }
 </style>
 
 @code {
     // ===================== داده تستی (Mock) =====================
     // این لیست فقط برای طراحی UI است — بعداً با HttpClient از GetAllForIndex جایگزین می‌شود
-    private List<ProductForIndex> _mockProducts = new()
+
+    private string? categoryName { set; get; }
+    private List<CategoriesDTo> _categoriesFromApi = new();
+    private List<ProductForIndex> _productFromApi = new();
+    private string? _errorMessage;
+    private Dictionary<int, string> _categoryNames = new();
+
+
+    protected override async Task OnInitializedAsync()
     {
-        new() { ProductId = 1, Name = "Shadow Realm Origins", Price = 349000, Imagename = "" },
-        new() { ProductId = 2, Name = "Velocity Circuit 3", Price = 219000, Imagename = "" },
-        new() { ProductId = 3, Name = "هدست بی‌سیم Nova X", Price = 980000, Imagename = "" },
-        new() { ProductId = 4, Name = "Champions League 26", Price = 275000, Imagename = "" },
-        new() { ProductId = 5, Name = "Silent Harbor", Price = 189000, Imagename = "" },
-        new() { ProductId = 6, Name = "دسته بازی ProGrip", Price = 1250000, Imagename = "" },
-        new() { ProductId = 7, Name = "Kingdom Tactics", Price = 299000, Imagename = "" },
-        new() { ProductId = 8, Name = "Arctic Survival Co-op", Price = 259000, Imagename = "" },
-    };
+
+        _isLoading = true;
+        _errorMessage = null;
+        try
+        {
+                 await JS.InvokeVoidAsync(
+                    "lumanLoader.setMessage",
+                    "در حال دریافت محصولات..."
+                );
+
+            _categoriesFromApi =
+                              await Http.GetFromJsonAsync<List<CategoriesDTo>>(
+                                  "api/v1/Product/Categoreis"
+                              ) ?? new List<CategoriesDTo>();
+
+            _productFromApi = await Http.GetFromJsonAsync<List<ProductForIndex>>(
+                            "api/v1/Product/GetAllProductForIndex"
+                            ) ?? new List<ProductForIndex>();
+
+            _categories = new[] { "همه" }
+                    .Concat(_categoriesFromApi
+                    .Where(c => !string.IsNullOrWhiteSpace(c.Name))
+                    .Select(c => c.Name!))
+                    .Distinct()
+                    .ToArray();
+
+            var ids = _productFromApi.Select(p => p.ProductId).ToList();
+            var response = await Http.PostAsJsonAsync("api/v1/Product/CategoryNames", ids);
+
+            if (response.IsSuccessStatusCode)
+                _categoryNames = await response.Content
+                    .ReadFromJsonAsync<Dictionary<int, string>>() ?? new();
+
+
+            await JS.InvokeVoidAsync("lumanLoader.hide");
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = ex.Message;
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
 
     private bool _isLoading = false;
     private string _searchTerm = "";
     private string _activeCategory = "همه";
-    private readonly string[] _categories = { "همه", "اکشن", "ماجراجویی", "ورزشی", "لوازم جانبی" };
-
+    private string[] _categories = { "همه" };
     private IEnumerable<ProductForIndex> _filteredProducts =>
-        _mockProducts.Where(p => string.IsNullOrWhiteSpace(_searchTerm)
+        _productFromApi.Where(p => string.IsNullOrWhiteSpace(_searchTerm)
             || p.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase));
 
     private void OnCategoryChanged(IReadOnlyCollection<string> selected)
@@ -198,19 +582,22 @@
     }
 
     private string GetImageUrl(ProductForIndex product) =>
-        string.IsNullOrEmpty(product.Imagename) ? "" : $"/images/products/{product.Imagename}";
+     string.IsNullOrEmpty(product.Imagename)
+         ? ""
+         : $"https://localhost:7103/uploads/{product.Imagename}";
 
     private string GetTagColor(int productId) =>
         (productId % 3) switch { 0 => "gold", 1 => "teal", _ => "coral" };
 
-    private string GetCategoryLabel(int productId) =>
-        (productId % 4) switch
-        {
-            0 => "اکشن",
-            1 => "مسابقه‌ای",
-            2 => "لوازم جانبی",
-            _ => "ورزشی"
-        };
+    private async Task<string> GetCategoryLabel(int productId)
+    {
+        categoryName = await Http.GetFromJsonAsync<string>(
+                        "api/v1/Product/CategoryName/{productId}"
+                        );
+
+        return categoryName;
+    }
+
 
     private string FormatPrice(long price) => $"{price:N0}";
 
