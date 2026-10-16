@@ -1,4 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@using LumanGameShope.Web.Services
+@inherits LayoutComponentBase
+
+@inject AuthService Auth
+@implements IDisposable
 
 <MudThemeProvider />
 <MudPopoverProvider />
@@ -52,7 +56,8 @@
                 <span class="luman-trust-text">خرید آسان و سریع</span>
 
                 <div class="luman-account-section">
-                    @if (!IsLoggedIn)
+                    @* <p>وضعیت ورود: @Auth.IsLoggedIn | نام: @Auth.UserName</p> *@
+                    @if (!Auth.IsLoggedIn)
                     {
                         <MudButton Variant="Variant.Filled"
                                    Color="Color.Primary"
@@ -64,13 +69,42 @@
                     }
                     else
                     {
-                        <MudMenu AnchorOrigin="Origin.BottomRight"
+                        <MudMenu Label="@Auth.UserName"
+         StartIcon="@Icons.Material.Filled.Person"
+         EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
+         Variant="Variant.Outlined"
+         Color="Color.Primary"
+         Class="luman-account-menu"
+         AnchorOrigin="Origin.BottomRight"
+         TransformOrigin="Origin.TopRight">
+
+    <MudMenuItem Href="/account"
+                 Icon="@Icons.Material.Filled.Person">
+        حساب کاربری
+    </MudMenuItem>
+
+    <MudMenuItem Href="/orders"
+                 Icon="@Icons.Material.Filled.ReceiptLong">
+        سفارش‌های من
+    </MudMenuItem>
+
+    <MudDivider />
+
+    <MudMenuItem Icon="@Icons.Material.Filled.Logout"
+                 OnClick="@LogoutAsync">
+        خروج از حساب
+    </MudMenuItem>
+
+</MudMenu>
+                        @* <MudMenu AnchorOrigin="Origin.BottomRight"
                                  TransformOrigin="Origin.TopRight"
                                  Class="luman-account-menu">
 
                             <ActivatorContent>
                                 <MudButton Variant="Variant.Outlined"
-                                           Class="luman-account-button">
+                                           Class="luman-account-button"
+                                           OnClick="@(() => { })">
+
                                     <MudAvatar Size="Size.Small"
                                                Color="Color.Primary"
                                                Variant="Variant.Filled">
@@ -78,7 +112,9 @@
                                                  Size="Size.Small" />
                                     </MudAvatar>
 
-                                    <span class="luman-account-name">@UserName</span>
+                                    <span class="luman-account-name">
+                                        @(Auth.UserName ?? "کاربر")
+                                    </span>
 
                                     <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowDown"
                                              Size="Size.Small" />
@@ -99,11 +135,11 @@
                                 <MudDivider />
 
                                 <MudMenuItem Icon="@Icons.Material.Filled.Logout"
-                                             OnClick="LogoutAsync">
+                                             OnClick="@LogoutAsync">
                                     خروج از حساب
                                 </MudMenuItem>
                             </ChildContent>
-                        </MudMenu>
+                        </MudMenu> *@
                     }
                 </div>
             </div>
@@ -123,17 +159,30 @@
 </div>
 
 @code {
-    private bool IsLoggedIn = false;
-    private string UserName = "کاربر";
+   
+
+    protected override async Task OnInitializedAsync()
+    {
+        Auth.AuthStateChanged += HandleAuthStateChanged;
+
+        await Auth.InitializeAsync();
+
+        Console.WriteLine($"IsLoggedIn: {Auth.IsLoggedIn}");
+        Console.WriteLine($"UserName: {Auth.UserName}");
+    }
+
+    private void HandleAuthStateChanged()
+    {
+        _ = InvokeAsync(StateHasChanged);
+    }
 
     private async Task LogoutAsync()
     {
-        // در این قسمت باید توکن یا نشست کاربر
-        // از طریق سرویس احراز هویت پروژه پاک شود.
+        await Auth.LogoutAsync();
+    }
 
-        IsLoggedIn = false;
-        UserName = "کاربر";
-
-        await Task.CompletedTask;
+    public void Dispose()
+    {
+        Auth.AuthStateChanged -= HandleAuthStateChanged;
     }
 }

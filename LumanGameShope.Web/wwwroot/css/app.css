@@ -634,3 +634,99 @@ code {
         max-width: 75px;
     }
 }
+
+
+.luman-login-page {
+    min-height: calc(100vh - 140px);
+    display: grid;
+    place-items: center;
+    padding: 32px 16px;
+    background: radial-gradient(ellipse at top, rgb(59 130 246 / 10%), transparent 55%);
+}
+
+.luman-login-card {
+    width: 100%;
+    max-width: 430px;
+    padding: 36px;
+    border: 1px solid #26364F;
+    border-radius: 24px;
+    background: linear-gradient(145deg, #151E30, #101827);
+    box-shadow: 0 24px 70px rgb(0 0 0 / 25%);
+}
+
+.luman-login-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #60A5FA;
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: 3px;
+}
+
+    .luman-login-brand small {
+        align-self: center;
+        font-size: 10px;
+        letter-spacing: 2px;
+        color: #94A3B8;
+    }
+
+.luman-login-card h1 {
+    margin: 32px 0 8px;
+    color: #F1F5F9;
+    font-size: 25px;
+    font-weight: 800;
+    text-align: center;
+}
+
+.luman-login-description {
+    margin-bottom: 28px;
+    color: #94A3B8;
+    font-size: 13px;
+    line-height: 1.9;
+    text-align: center;
+}
+
+.luman-login-card label {
+    display: block;
+    margin: 18px 0 8px;
+    color: #CBD5E1;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.luman-login-submit {
+    min-height: 48px;
+    margin-top: 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #3B82F6, #2563EB);
+}
+
+.luman-login-error {
+    margin-top: 16px;
+    padding: 12px;
+    border: 1px solid rgb(248 113 113 / 30%);
+    border-radius: 10px;
+    background: rgb(127 29 29 / 15%);
+    color: #FCA5A5;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.luman-login-footer {
+    margin-top: 26px;
+    padding-top: 18px;
+    border-top: 1px solid #26364F;
+    color: #64748B;
+    font-size: 12px;
+    text-align: center;
+}
+
+@media (max-width: 480px) {
+    .luman-login-card {
+        padding: 26px 20px;
+        border-radius: 18px;
+    }
+}

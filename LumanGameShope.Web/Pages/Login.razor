@@ -1,0 +1,125 @@
+﻿@page "/login"
+@using LumanGameShope.Web.DTOs.User
+@using LumanGameShope.Web.Services
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+
+<PageTitle>ورود | Luman Game Shop</PageTitle>
+
+<div class="luman-login-page" dir="rtl">
+    <div class="luman-login-card">
+        <div class="luman-login-brand">
+            <MudIcon Icon="@Icons.Material.Filled.SportsEsports"
+                     Size="Size.Large" />
+            <span>LUMAN</span>
+            <small>GAME SHOP</small>
+        </div>
+
+        <h1>خوش برگشتی!</h1>
+        <p class="luman-login-description">
+            برای ورود به حساب کاربری خود اطلاعاتت رو وارد کن.
+        </p>
+
+        <EditForm Model="_model" OnValidSubmit="HandleLoginAsync">
+            <DataAnnotationsValidator />
+
+            <label for="username">نام کاربری</label>
+            <MudTextField T="string"
+                          @bind-Value="_model.UserName"
+                          For="@(() => _model.UserName)"
+                          Placeholder="نام کاربری خود را وارد کنید"
+                          Variant="Variant.Outlined"
+                          Required="true"
+                          RequiredError="نام کاربری الزامی است."
+                          FullWidth="true" />
+
+            <label for="password">رمز عبور</label>
+            <MudTextField T="string"
+                          @bind-Value="_model.Password"
+                          InputType="@(_showPassword
+                              ? InputType.Text
+                              : InputType.Password)"
+                          Placeholder="رمز عبور خود را وارد کنید"
+                          Variant="Variant.Outlined"
+                          Required="true"
+                          RequiredError="رمز عبور الزامی است."
+                          Adornment="Adornment.End"
+                          AdornmentIcon="@(_showPassword
+                              ? Icons.Material.Filled.VisibilityOff
+                          : Icons.Material.Filled.Visibility)"
+                          OnAdornmentClick="@(() => _showPassword = !_showPassword)"
+                          FullWidth="true" />
+
+            @if (!string.IsNullOrWhiteSpace(_errorMessage))
+            {
+                <div class="luman-login-error" role="alert">
+                    @_errorMessage
+                </div>
+            }
+
+            <MudButton ButtonType="ButtonType.Submit"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       FullWidth="true"
+                       Disabled="_isLoading"
+                       Class="luman-login-submit">
+                @if (_isLoading)
+                {
+                    <MudProgressCircular Indeterminate="true"
+                                         Size="Size.Small"
+                                         Class="me-2" />
+                    <span>در حال ورود...</span>
+                }
+                else
+                {
+                    <span>ورود به حساب کاربری</span>
+                    <MudIcon Icon="@Icons.Material.Filled.ArrowBack"
+                             Class="me-2" />
+                }
+            </MudButton>
+        </EditForm>
+
+        <div class="luman-login-footer">
+            ورود امن به فروشگاه Luman
+        </div>
+    </div>
+</div>
+
+@code {
+    private LoginRequest _model = new();
+    private bool _isLoading;
+    private bool _showPassword;
+    private string? _errorMessage;
+
+
+    private async Task HandleLoginAsync()
+    {
+        _isLoading = true;
+        _errorMessage = null;
+
+        try
+        {
+            var result = await AuthService.LoginAsync(_model);
+
+            if (result is null)
+            {
+                _errorMessage = "ورود ناموفق بود. نام کاربری و رمز عبور را بررسی کن.";
+                return;
+            }
+
+            Navigation.NavigateTo("/", forceLoad: true);
+        }
+        catch (HttpRequestException)
+        {
+            _errorMessage = "ارتباط با سرور برقرار نشد.";
+        }
+        catch (Microsoft.JSInterop.JSException)
+        {
+            _errorMessage = "ذخیره اطلاعات نشست کاربر ناموفق بود.";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}
