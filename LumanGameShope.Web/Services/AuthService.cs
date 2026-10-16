@@ -24,7 +24,8 @@ namespace LumanGameShope.Web.Services
                 "api/v1/Account/Login", request, ct);
 
             if (response.StatusCode is HttpStatusCode.Unauthorized
-                                    or HttpStatusCode.BadRequest)
+                        or HttpStatusCode.BadRequest
+                        or HttpStatusCode.NotFound)
                 return new(false, "نام کاربری یا رمز عبور اشتباه است.");
 
             if (!response.IsSuccessStatusCode)

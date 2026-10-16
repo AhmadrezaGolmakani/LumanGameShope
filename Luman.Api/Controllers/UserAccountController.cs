@@ -87,11 +87,11 @@ namespace Luman.Api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(model);
 
-            if (_services.IsCorrectpass(model.UserName, model.Password))
-            {
-                return BadRequest(new { error = "کاربر یافت نشد." });
+            //if (_services.IsCorrectpass(model.UserName, model.Password))
+            //{
+            //    return BadRequest(new { error = "کاربر یافت نشد." });
 
-            }
+            //}
 
             var user = await _services.LoginUser(model.UserName, model.Password);
             if (user == null)

@@ -154,7 +154,7 @@ namespace Luman.Busines.Services.UserService
 
         public async Task<User> LoginUser(string username, string pass)
         {
-            var hashPass = PasswordHelper.HashPassword(pass);
+            //var hashPass = PasswordHelper.HashPassword(pass);
             var user =await _context.users.SingleOrDefaultAsync(c => c.UserName == username );
 
             if (user == null)

@@ -3,8 +3,10 @@
 
 @inject AuthService Auth
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
 
-<MudThemeProvider />
+<MudRTLProvider RightToLeft="true">
+<MudThemeProvider Theme="_theme" IsDarkMode="true" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
@@ -107,11 +109,43 @@
     </main>
 
 </div>
+</MudRTLProvider>
 
 @code {
+
+    private readonly MudTheme _theme = new()
+    {
+        PaletteDark = new PaletteDark
+        {
+            Primary = "#3B82F6",
+            Secondary = "#22D3EE",
+            Background = "#0B1120",
+            Surface = "#151E30",
+            TextPrimary = "#F1F5F9",
+            TextSecondary = "#94A3B8",
+            Divider = "#26364F",
+            LinesDefault = "#26364F",
+            LinesInputs = "#30415C"
+        },
+        Typography = new Typography
+        {
+            Default = new DefaultTypography
+            {
+                FontFamily = new[] { "Vazirmatn", "Tahoma", "Arial", "sans-serif" }
+            }
+        }
+    };
+
+
     private async Task LogoutAsync()
     {
         await Auth.LogoutAsync();
         Navigation.NavigateTo("/login");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await JS.InvokeVoidAsync("lumanLoader.hide");
     }
 }

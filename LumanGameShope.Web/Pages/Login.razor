@@ -5,6 +5,7 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject AuthService AuthService
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
 
 <PageTitle>ورود | Luman Game Shop</PageTitle>
 
@@ -140,7 +141,11 @@
             _isLoading = false;
         }
     }
-
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await JS.InvokeVoidAsync("lumanLoader.hide");
+    }
     // جلوگیری از Open Redirect: فقط مسیر داخلی
     private static bool IsSafeReturnUrl(string? url) =>
         !string.IsNullOrWhiteSpace(url)
