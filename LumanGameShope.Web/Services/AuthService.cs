@@ -1,105 +1,45 @@
-﻿using LumanGameShope.Web.DTOs.User;
-using Microsoft.JSInterop;
+﻿using System.Net;
 using System.Net.Http.Json;
+using LumanGameShope.Web.DTOs.User;
 
 namespace LumanGameShope.Web.Services
 {
+    public sealed record LoginResult(bool Success, string? Error = null);
+
     public sealed class AuthService
     {
         private readonly HttpClient _httpClient;
-        private readonly IJSRuntime _js;
+        private readonly JwtAuthenticationStateProvider _auth;
 
-        public AuthService(HttpClient httpClient, IJSRuntime js)
+        public AuthService(HttpClient httpClient, JwtAuthenticationStateProvider auth)
         {
             _httpClient = httpClient;
-            _js = js;
+            _auth = auth;
         }
 
-        public async Task<LoginResponse?> LoginAsync(
-            LoginRequest request,
-            CancellationToken cancellationToken = default)
+        public async Task<LoginResult> LoginAsync(
+            LoginRequest request, CancellationToken ct = default)
         {
             using var response = await _httpClient.PostAsJsonAsync(
-                "api/v1/Account/Login",
-                request,
-                cancellationToken);
+                "api/v1/Account/Login", request, ct);
+
+            if (response.StatusCode is HttpStatusCode.Unauthorized
+                                    or HttpStatusCode.BadRequest)
+                return new(false, "نام کاربری یا رمز عبور اشتباه است.");
 
             if (!response.IsSuccessStatusCode)
-                return null;
+                return new(false, "خطای سرور. کمی بعد دوباره تلاش کن.");
 
             var result = await response.Content
-                .ReadFromJsonAsync<LoginResponse>(
-                    cancellationToken: cancellationToken);
+                .ReadFromJsonAsync<LoginResponse>(cancellationToken: ct);
 
-            if (result is null ||
-                string.IsNullOrWhiteSpace(result.JwtToken))
-            {
-                return null;
-            }
+            if (result is null || string.IsNullOrWhiteSpace(result.JwtToken))
+                return new(false, "پاسخ نامعتبر از سرور.");
 
-            await _js.InvokeVoidAsync(
-                "sessionStorage.setItem",
-                cancellationToken,
-                "authToken",
-                result.JwtToken);
-
-            await _js.InvokeVoidAsync(
-                "sessionStorage.setItem",
-                cancellationToken,
-                "userName",
-                result.UserName);
-
-            await _js.InvokeVoidAsync(
-                "sessionStorage.setItem",
-                cancellationToken,
-                "userId",
-                result.UserId.ToString());
-
-
-            UserName = result.UserName;
-            IsLoggedIn = true;
-
-            AuthStateChanged?.Invoke();
-
-            return result;
+            await _auth.SignInAsync(result.JwtToken);
+            return new(true);
         }
 
-        public async Task LogoutAsync()
-        {
-            await _js.InvokeVoidAsync(
-                "sessionStorage.removeItem", "authToken");
-
-            await _js.InvokeVoidAsync(
-                "sessionStorage.removeItem", "userName");
-
-            await _js.InvokeVoidAsync(
-                "sessionStorage.removeItem", "userId");
-
-            UserName = null;
-            IsLoggedIn = false;
-
-            AuthStateChanged?.Invoke();
-        }
-
-
-
-        public event Action? AuthStateChanged;
-
-        public bool IsLoggedIn { get; private set; }
-
-        public string? UserName { get; private set; }
-
-        public async Task InitializeAsync()
-        {
-            var token = await _js.InvokeAsync<string?>(
-                "sessionStorage.getItem", "authToken");
-
-            UserName = await _js.InvokeAsync<string?>(
-                "sessionStorage.getItem", "userName");
-
-            IsLoggedIn = !string.IsNullOrWhiteSpace(token);
-
-            AuthStateChanged?.Invoke();
-        }
+        public Task LogoutAsync() => _auth.SignOutAsync();
     }
 }

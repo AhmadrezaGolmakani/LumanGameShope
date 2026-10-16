@@ -2,7 +2,7 @@
 @inherits LayoutComponentBase
 
 @inject AuthService Auth
-@implements IDisposable
+@inject NavigationManager Navigation
 
 <MudThemeProvider />
 <MudPopoverProvider />
@@ -19,12 +19,8 @@
             </div>
 
             <div class="luman-brand-text">
-                <span class="luman-brand-name">
-                    LUMAN
-                </span>
-                <span class="luman-brand-subtitle">
-                    GAME SHOP
-                </span>
+                <span class="luman-brand-name">LUMAN</span>
+                <span class="luman-brand-subtitle">GAME SHOP</span>
             </div>
         </div>
 
@@ -41,7 +37,6 @@
 
     <main class="luman-main">
 
-
         <header class="top-row luman-topbar">
             <div class="luman-topbar-title">
                 <span class="luman-status-dot"></span>
@@ -56,72 +51,17 @@
                 <span class="luman-trust-text">خرید آسان و سریع</span>
 
                 <div class="luman-account-section">
-                    @* <p>وضعیت ورود: @Auth.IsLoggedIn | نام: @Auth.UserName</p> *@
-                    @if (!Auth.IsLoggedIn)
-                    {
-                        <MudButton Variant="Variant.Filled"
-                                   Color="Color.Primary"
-                                   StartIcon="@Icons.Material.Filled.Login"
-                                   Class="luman-login-button"
-                                   Href="/login">
-                            ورود / ثبت‌نام
-                        </MudButton>
-                    }
-                    else
-                    {
-                        <MudMenu Label="@Auth.UserName"
-         StartIcon="@Icons.Material.Filled.Person"
-         EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
-         Variant="Variant.Outlined"
-         Color="Color.Primary"
-         Class="luman-account-menu"
-         AnchorOrigin="Origin.BottomRight"
-         TransformOrigin="Origin.TopRight">
+                    <AuthorizeView Context="authState">
+                        <Authorized>
+                            <MudMenu Label="@(authState.User.Identity?.Name ?? "کاربر")"
+                                     StartIcon="@Icons.Material.Filled.Person"
+                                     EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
+                                     Variant="Variant.Outlined"
+                                     Color="Color.Primary"
+                                     Class="luman-account-menu"
+                                     AnchorOrigin="Origin.BottomRight"
+                                     TransformOrigin="Origin.TopRight">
 
-    <MudMenuItem Href="/account"
-                 Icon="@Icons.Material.Filled.Person">
-        حساب کاربری
-    </MudMenuItem>
-
-    <MudMenuItem Href="/orders"
-                 Icon="@Icons.Material.Filled.ReceiptLong">
-        سفارش‌های من
-    </MudMenuItem>
-
-    <MudDivider />
-
-    <MudMenuItem Icon="@Icons.Material.Filled.Logout"
-                 OnClick="@LogoutAsync">
-        خروج از حساب
-    </MudMenuItem>
-
-</MudMenu>
-                        @* <MudMenu AnchorOrigin="Origin.BottomRight"
-                                 TransformOrigin="Origin.TopRight"
-                                 Class="luman-account-menu">
-
-                            <ActivatorContent>
-                                <MudButton Variant="Variant.Outlined"
-                                           Class="luman-account-button"
-                                           OnClick="@(() => { })">
-
-                                    <MudAvatar Size="Size.Small"
-                                               Color="Color.Primary"
-                                               Variant="Variant.Filled">
-                                        <MudIcon Icon="@Icons.Material.Filled.Person"
-                                                 Size="Size.Small" />
-                                    </MudAvatar>
-
-                                    <span class="luman-account-name">
-                                        @(Auth.UserName ?? "کاربر")
-                                    </span>
-
-                                    <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowDown"
-                                             Size="Size.Small" />
-                                </MudButton>
-                            </ActivatorContent>
-
-                            <ChildContent>
                                 <MudMenuItem Href="/account"
                                              Icon="@Icons.Material.Filled.Person">
                                     حساب کاربری
@@ -138,9 +78,19 @@
                                              OnClick="@LogoutAsync">
                                     خروج از حساب
                                 </MudMenuItem>
-                            </ChildContent>
-                        </MudMenu> *@
-                    }
+                            </MudMenu>
+                        </Authorized>
+
+                        <NotAuthorized>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.Login"
+                                       Class="luman-login-button"
+                                       Href="/login">
+                                ورود / ثبت‌نام
+                            </MudButton>
+                        </NotAuthorized>
+                    </AuthorizeView>
                 </div>
             </div>
         </header>
@@ -159,30 +109,9 @@
 </div>
 
 @code {
-   
-
-    protected override async Task OnInitializedAsync()
-    {
-        Auth.AuthStateChanged += HandleAuthStateChanged;
-
-        await Auth.InitializeAsync();
-
-        Console.WriteLine($"IsLoggedIn: {Auth.IsLoggedIn}");
-        Console.WriteLine($"UserName: {Auth.UserName}");
-    }
-
-    private void HandleAuthStateChanged()
-    {
-        _ = InvokeAsync(StateHasChanged);
-    }
-
     private async Task LogoutAsync()
     {
         await Auth.LogoutAsync();
-    }
-
-    public void Dispose()
-    {
-        Auth.AuthStateChanged -= HandleAuthStateChanged;
+        Navigation.NavigateTo("/login");
     }
 }

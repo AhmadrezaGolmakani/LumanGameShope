@@ -1,6 +1,8 @@
 ﻿@page "/login"
 @using LumanGameShope.Web.DTOs.User
 @using LumanGameShope.Web.Services
+@using System.Text.Json
+@inject AuthenticationStateProvider AuthStateProvider
 @inject AuthService AuthService
 @inject NavigationManager Navigation
 
@@ -35,6 +37,8 @@
 
             <label for="password">رمز عبور</label>
             <MudTextField T="string"
+                          For="@(() => _model.Password)"
+
                           @bind-Value="_model.Password"
                           InputType="@(_showPassword
                               ? InputType.Text
@@ -91,6 +95,15 @@
     private bool _showPassword;
     private string? _errorMessage;
 
+    [SupplyParameterFromQuery(Name = "returnUrl")]
+    private string? ReturnUrl { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (state.User.Identity?.IsAuthenticated == true)
+            Navigation.NavigateTo("/");
+    }
 
     private async Task HandleLoginAsync()
     {
@@ -101,17 +114,22 @@
         {
             var result = await AuthService.LoginAsync(_model);
 
-            if (result is null)
+            if (!result.Success)
             {
-                _errorMessage = "ورود ناموفق بود. نام کاربری و رمز عبور را بررسی کن.";
+                _errorMessage = result.Error;
+                _model.Password = string.Empty;
                 return;
             }
 
-            Navigation.NavigateTo("/", forceLoad: true);
+            Navigation.NavigateTo(IsSafeReturnUrl(ReturnUrl) ? ReturnUrl! : "/");
         }
-        catch (HttpRequestException)
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
             _errorMessage = "ارتباط با سرور برقرار نشد.";
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException)
+        {
+            _errorMessage = "پاسخ نامعتبر از سرور.";
         }
         catch (Microsoft.JSInterop.JSException)
         {
@@ -122,4 +140,10 @@
             _isLoading = false;
         }
     }
+
+    // جلوگیری از Open Redirect: فقط مسیر داخلی
+    private static bool IsSafeReturnUrl(string? url) =>
+        !string.IsNullOrWhiteSpace(url)
+        && !url.StartsWith('/') && !url.StartsWith('\\')
+        && !url.Contains(':');
 }
