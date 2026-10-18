@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luman.Api", "Luman.Api\Luma
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LumanGameShope.Web", "LumanGameShope.Web\LumanGameShope.Web.csproj", "{9C505B43-D891-49F3-B0A0-0D16E42D418E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminLuman", "AdminLuman\AdminLuman.csproj", "{4196A2F7-1082-42CE-90FA-B7BF97D48072}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{9C505B43-D891-49F3-B0A0-0D16E42D418E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C505B43-D891-49F3-B0A0-0D16E42D418E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C505B43-D891-49F3-B0A0-0D16E42D418E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4196A2F7-1082-42CE-90FA-B7BF97D48072}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4196A2F7-1082-42CE-90FA-B7BF97D48072}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4196A2F7-1082-42CE-90FA-B7BF97D48072}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4196A2F7-1082-42CE-90FA-B7BF97D48072}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
